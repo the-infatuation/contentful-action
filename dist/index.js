@@ -11606,215 +11606,28 @@ module.exports = mapCacheDelete;
 
 /***/ }),
 /* 82 */
-/***/ (function(module, __unusedexports, __webpack_require__) {
+/***/ (function(__unusedmodule, exports) {
 
 "use strict";
 
-
-const leven = __webpack_require__(52)
-
-const getSimilarity = __webpack_require__(603)
-const matchItemProcessor = __webpack_require__(487)
-const normalizeString = __webpack_require__(284)
-const resultProcessor = __webpack_require__(358)
-const runOptionsSchema = __webpack_require__(179)
-const returnTypeEnums = __webpack_require__(464)
-const thresholdTypeEnums = __webpack_require__(634)
-
-const ALL_CLOSEST_MATCHES = returnTypeEnums.ALL_CLOSEST_MATCHES
-const ALL_MATCHES = returnTypeEnums.ALL_MATCHES
-const ALL_SORTED_MATCHES = returnTypeEnums.ALL_SORTED_MATCHES
-const FIRST_CLOSEST_MATCH = returnTypeEnums.FIRST_CLOSEST_MATCH
-const FIRST_MATCH = returnTypeEnums.FIRST_MATCH
-const RANDOM_CLOSEST_MATCH = returnTypeEnums.RANDOM_CLOSEST_MATCH
-
-const EDIT_DISTANCE = thresholdTypeEnums.EDIT_DISTANCE
-const SIMILARITY = thresholdTypeEnums.SIMILARITY
-
+// We use any as a valid input type
+/* eslint-disable @typescript-eslint/no-explicit-any */
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * Main function for didyoumean2
- * @param {string} input - string that you are not sure and want to match with `matchList`
- * @param {Object[]|string[]} matchList - List for matching with `input`
- * @param {null|Object|undefined} options - options that allows you to modify the behavior
- * @returns {Array|null|Object|string} - matched result(s), return object if `match` is `{Object[]}`
+ * Sanitizes an input into a string so it can be passed into issueCommand safely
+ * @param input input to sanitize into a string
  */
-function didYouMean(input, matchList, options) {
-  /*+++++++++++++++++++
-   + Initiate options +
-   +++++++++++++++++++*/
-
-  options = runOptionsSchema(options)
-
-  const returnType = options.returnType
-  const threshold = options.threshold
-  const thresholdType = options.thresholdType
-
-
-  /*++++++++++++++++++++
-   + Deal with options +
-   ++++++++++++++++++++*/
-
-  const normalizedInput = normalizeString(input, options)
-
-  let checkIfMatched // Validate if score is matched
-  let scoreProcessor // Get score
-  switch (thresholdType) {
-    case EDIT_DISTANCE:
-      checkIfMatched = (score) => score <= threshold
-      scoreProcessor = (matchItem) => {
-        return leven(
-          normalizedInput,
-          matchItemProcessor(matchItem, options)
-        )
-      }
-      break
-
-    case SIMILARITY:
-      checkIfMatched = (score) => score >= threshold
-      scoreProcessor = (matchItem) => {
-        return getSimilarity(
-          normalizedInput,
-          matchItemProcessor(matchItem, options)
-        )
-      }
-      break
-
-    /* istanbul ignore next */ // handled by simpleSchema
-    default:
-  }
-
-
-  /*+++++++++++
-   + Matching +
-   +++++++++++*/
-
-  const matchedIndexes = []
-  const matchListLen = matchList.length
-
-  switch (returnType) {
-    case ALL_CLOSEST_MATCHES:
-    case FIRST_CLOSEST_MATCH:
-    case RANDOM_CLOSEST_MATCH: {
-      const scores = []
-
-      let marginValue
-      switch (thresholdType) {
-        case EDIT_DISTANCE:
-          // Process score and save the smallest score
-          marginValue = Infinity
-          for (let i = 0; i < matchListLen; i += 1) {
-            const score = scoreProcessor(matchList[i])
-
-            if (marginValue > score) marginValue = score
-
-            scores.push(score)
-          }
-          break
-
-        case SIMILARITY:
-          // Process score and save the largest score
-          marginValue = 0
-          for (let i = 0; i < matchListLen; i += 1) {
-            const score = scoreProcessor(matchList[i])
-
-            if (marginValue < score) marginValue = score
-
-            scores.push(score)
-          }
-          break
-
-        /* istanbul ignore next */ // handled by simpleSchema
-        default:
-      }
-
-      const scoresLen = scores.length
-      for (let i = 0; i < scoresLen; i += 1) {
-        const score = scores[i]
-
-        if (checkIfMatched(score)) {
-          // Just save the closest value
-          if (score === marginValue) {
-            matchedIndexes.push(i)
-          }
-        }
-      }
-
-      break
+function toCommandValue(input) {
+    if (input === null || input === undefined) {
+        return '';
     }
-
-    case ALL_MATCHES:
-      for (let i = 0; i < matchListLen; i += 1) {
-        const score = scoreProcessor(matchList[i])
-
-        // save all indexes of matched scores
-        if (checkIfMatched(score)) {
-          matchedIndexes.push(i)
-        }
-      }
-
-      break
-
-    case ALL_SORTED_MATCHES: {
-      const unsortedResults = []
-      for (let i = 0; i < matchListLen; i += 1) {
-        const score = scoreProcessor(matchList[i])
-
-        // save all indexes of matched scores
-        if (checkIfMatched(score)) {
-          unsortedResults.push({
-            score: score,
-            index: i
-          })
-        }
-      }
-
-      switch (thresholdType) {
-        case EDIT_DISTANCE:
-          unsortedResults.sort((a, b) => a.score - b.score)
-          break
-
-        case SIMILARITY:
-          unsortedResults.sort((a, b) => b.score - a.score)
-          break
-
-        /* istanbul ignore next */ // handled by simpleSchema
-        default:
-      }
-
-      for (const unsortedResult of unsortedResults) {
-        matchedIndexes.push(unsortedResult.index)
-      }
-
-      break
+    else if (typeof input === 'string' || input instanceof String) {
+        return input;
     }
-
-    case FIRST_MATCH:
-      for (let i = 0; i < matchListLen; i += 1) {
-        const score = scoreProcessor(matchList[i])
-
-        // Return once matched, performance is main target in this returnType
-        if (checkIfMatched(score)) {
-          matchedIndexes.push(i)
-          break
-        }
-      }
-
-      break
-
-    /* istanbul ignore next */ // handled by simpleSchema
-    default:
-  }
-
-
-  /*+++++++++++++++++++++++
-   + Process return value +
-   +++++++++++++++++++++++*/
-
-  return resultProcessor(matchList, matchedIndexes, returnType)
+    return JSON.stringify(input);
 }
-
-module.exports = didYouMean
-
+exports.toCommandValue = toCommandValue;
+//# sourceMappingURL=utils.js.map
 
 /***/ }),
 /* 83 */,
@@ -14053,7 +13866,41 @@ Prompt.prototype.onError = function (state) {
 
 
 /***/ }),
-/* 102 */,
+/* 102 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+// For internal use, subject to change.
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+// We use any as a valid input type
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const fs = __importStar(__webpack_require__(747));
+const os = __importStar(__webpack_require__(87));
+const utils_1 = __webpack_require__(82);
+function issueCommand(command, message) {
+    const filePath = process.env[`GITHUB_${command}`];
+    if (!filePath) {
+        throw new Error(`Unable to find environment variable for file command ${command}`);
+    }
+    if (!fs.existsSync(filePath)) {
+        throw new Error(`Missing file at path: ${filePath}`);
+    }
+    fs.appendFileSync(filePath, `${utils_1.toCommandValue(message)}${os.EOL}`, {
+        encoding: 'utf8'
+    });
+}
+exports.issueCommand = issueCommand;
+//# sourceMappingURL=file-command.js.map
+
+/***/ }),
 /* 103 */
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -14100,7 +13947,7 @@ async function run() {
     const {default: runMigration} = __webpack_require__(315);
 
     // utility fns
-    const getVersionOfFile = (file) => file.replace('.js', '').replace(/_/g, '.');
+    const getVersionOfFile = (file) => parseInt(file.replace('.js', '').replace(/_/g, '.'));
     const getFileOfVersion = (version) => version.replace(/\./g, '_') + '.js';
 
     const getBranchName = () => {
@@ -14220,7 +14067,7 @@ async function run() {
     console.log('Read all the available migrations from the file system');
     const availableMigrations = (await readdirAsync(MIGRATIONS_DIR))
       .filter(file => /^\d+?\.js$/.test(file))
-      .map(file => getVersionOfFile(file));
+      .map(file => getVersionOfFile(file)).sort((a,b)=> a-b).map(num=> `${num}.js`);
 
     // ---------------------------------------------------------------------------
     console.log('Figure out latest ran migration of the contentful space');
@@ -61174,7 +61021,7 @@ exports.endpoint = endpoint;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = __webpack_require__(274);
-const didYouMean = __webpack_require__(82);
+const didYouMean = __webpack_require__(716);
 const kindOf = __webpack_require__(341);
 const validationErrors = {
     INVALID_MOVEMENT_TYPE: (typeName) => {
@@ -61674,7 +61521,7 @@ module.exports.detectFileSync = function(filepath, opts) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = __webpack_require__(274);
-const didYouMean = __webpack_require__(82);
+const didYouMean = __webpack_require__(716);
 const kindOf = __webpack_require__(341);
 const validationErrors = {
     INVALID_PROPERTY_NAME: (propName, article, typeName) => {
@@ -63299,6 +63146,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const os = __importStar(__webpack_require__(87));
+const utils_1 = __webpack_require__(82);
 /**
  * Commands
  *
@@ -63352,28 +63200,14 @@ class Command {
         return cmdStr;
     }
 }
-/**
- * Sanitizes an input into a string so it can be passed into issueCommand safely
- * @param input input to sanitize into a string
- */
-function toCommandValue(input) {
-    if (input === null || input === undefined) {
-        return '';
-    }
-    else if (typeof input === 'string' || input instanceof String) {
-        return input;
-    }
-    return JSON.stringify(input);
-}
-exports.toCommandValue = toCommandValue;
 function escapeData(s) {
-    return toCommandValue(s)
+    return utils_1.toCommandValue(s)
         .replace(/%/g, '%25')
         .replace(/\r/g, '%0D')
         .replace(/\n/g, '%0A');
 }
 function escapeProperty(s) {
-    return toCommandValue(s)
+    return utils_1.toCommandValue(s)
         .replace(/%/g, '%25')
         .replace(/\r/g, '%0D')
         .replace(/\n/g, '%0A')
@@ -64954,6 +64788,12 @@ function convertBody(buffer, headers) {
 	// html4
 	if (!res && str) {
 		res = /<meta[\s]+?http-equiv=(['"])content-type\1[\s]+?content=(['"])(.+?)\2/i.exec(str);
+		if (!res) {
+			res = /<meta[\s]+?content=(['"])(.+?)\1[\s]+?http-equiv=(['"])content-type\3/i.exec(str);
+			if (res) {
+				res.pop(); // drop last quote
+			}
+		}
 
 		if (res) {
 			res = /charset=(.*)/i.exec(res.pop());
@@ -65961,7 +65801,7 @@ function fetch(url, opts) {
 				// HTTP fetch step 5.5
 				switch (request.redirect) {
 					case 'error':
-						reject(new FetchError(`redirect mode is set to error: ${request.url}`, 'no-redirect'));
+						reject(new FetchError(`uri requested responds with a redirect, redirect mode is set to error: ${request.url}`, 'no-redirect'));
 						finalize();
 						return;
 					case 'manual':
@@ -66000,7 +65840,8 @@ function fetch(url, opts) {
 							method: request.method,
 							body: request.body,
 							signal: request.signal,
-							timeout: request.timeout
+							timeout: request.timeout,
+							size: request.size
 						};
 
 						// HTTP-redirect fetch step 9
@@ -66518,6 +66359,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = __webpack_require__(431);
+const file_command_1 = __webpack_require__(102);
+const utils_1 = __webpack_require__(82);
 const os = __importStar(__webpack_require__(87));
 const path = __importStar(__webpack_require__(622));
 /**
@@ -66544,9 +66387,17 @@ var ExitCode;
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function exportVariable(name, val) {
-    const convertedVal = command_1.toCommandValue(val);
+    const convertedVal = utils_1.toCommandValue(val);
     process.env[name] = convertedVal;
-    command_1.issueCommand('set-env', { name }, convertedVal);
+    const filePath = process.env['GITHUB_ENV'] || '';
+    if (filePath) {
+        const delimiter = '_GitHubActionsFileCommandDelimeter_';
+        const commandValue = `${name}<<${delimiter}${os.EOL}${convertedVal}${os.EOL}${delimiter}`;
+        file_command_1.issueCommand('ENV', commandValue);
+    }
+    else {
+        command_1.issueCommand('set-env', { name }, convertedVal);
+    }
 }
 exports.exportVariable = exportVariable;
 /**
@@ -66562,7 +66413,13 @@ exports.setSecret = setSecret;
  * @param inputPath
  */
 function addPath(inputPath) {
-    command_1.issueCommand('add-path', {}, inputPath);
+    const filePath = process.env['GITHUB_PATH'] || '';
+    if (filePath) {
+        file_command_1.issueCommand('PATH', inputPath);
+    }
+    else {
+        command_1.issueCommand('add-path', {}, inputPath);
+    }
     process.env['PATH'] = `${inputPath}${path.delimiter}${process.env['PATH']}`;
 }
 exports.addPath = addPath;
@@ -100908,7 +100765,7 @@ module.exports = getNative;
 /* 708 */
 /***/ (function(module) {
 
-module.exports = {"_args":[["joi@10.6.0","/Users/shy/Documents/Contentful/action-testing/contentful-action"]],"_from":"joi@10.6.0","_id":"joi@10.6.0","_inBundle":false,"_integrity":"sha512-hBF3LcqyAid+9X/pwg+eXjD2QBZI5eXnBFJYaAkH4SK3mp9QSRiiQnDYlmlz5pccMvnLcJRS4whhDOTCkmsAdQ==","_location":"/joi","_phantomChildren":{},"_requested":{"type":"version","registry":true,"raw":"joi@10.6.0","name":"joi","escapedName":"joi","rawSpec":"10.6.0","saveSpec":null,"fetchSpec":"10.6.0"},"_requiredBy":["/contentful-migration"],"_resolved":"https://registry.npmjs.org/joi/-/joi-10.6.0.tgz","_spec":"10.6.0","_where":"/Users/shy/Documents/Contentful/action-testing/contentful-action","bugs":{"url":"https://github.com/hapijs/joi/issues"},"dependencies":{"hoek":"4.x.x","isemail":"2.x.x","items":"2.x.x","topo":"2.x.x"},"description":"Object schema validation","devDependencies":{"code":"4.x.x","hapitoc":"1.x.x","lab":"13.x.x"},"engines":{"node":">=4.0.0"},"homepage":"https://github.com/hapijs/joi","keywords":["hapi","schema","validation"],"license":"BSD-3-Clause","main":"lib/index.js","name":"joi","repository":{"type":"git","url":"git://github.com/hapijs/joi.git"},"scripts":{"test":"lab -t 100 -a code -L","test-cov-html":"lab -r html -o coverage.html -a code","test-debug":"lab -a code","toc":"hapitoc","version":"npm run toc && git add API.md README.md"},"version":"10.6.0"};
+module.exports = {"_args":[["joi@10.6.0","/Users/adrian/code/contentful-action"]],"_from":"joi@10.6.0","_id":"joi@10.6.0","_inBundle":false,"_integrity":"sha512-hBF3LcqyAid+9X/pwg+eXjD2QBZI5eXnBFJYaAkH4SK3mp9QSRiiQnDYlmlz5pccMvnLcJRS4whhDOTCkmsAdQ==","_location":"/joi","_phantomChildren":{},"_requested":{"type":"version","registry":true,"raw":"joi@10.6.0","name":"joi","escapedName":"joi","rawSpec":"10.6.0","saveSpec":null,"fetchSpec":"10.6.0"},"_requiredBy":["/contentful-migration"],"_resolved":"https://registry.npmjs.org/joi/-/joi-10.6.0.tgz","_spec":"10.6.0","_where":"/Users/adrian/code/contentful-action","bugs":{"url":"https://github.com/hapijs/joi/issues"},"dependencies":{"hoek":"4.x.x","isemail":"2.x.x","items":"2.x.x","topo":"2.x.x"},"description":"Object schema validation","devDependencies":{"code":"4.x.x","hapitoc":"1.x.x","lab":"13.x.x"},"engines":{"node":">=4.0.0"},"homepage":"https://github.com/hapijs/joi","keywords":["hapi","schema","validation"],"license":"BSD-3-Clause","main":"lib/index.js","name":"joi","repository":{"type":"git","url":"git://github.com/hapijs/joi.git"},"scripts":{"test":"lab -t 100 -a code -L","test-cov-html":"lab -r html -o coverage.html -a code","test-debug":"lab -a code","toc":"hapitoc","version":"npm run toc && git add API.md README.md"},"version":"10.6.0"};
 
 /***/ }),
 /* 709 */,
@@ -101333,7 +101190,218 @@ Promise.PromiseInspection = PromiseInspection;
 
 
 /***/ }),
-/* 716 */,
+/* 716 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const leven = __webpack_require__(52)
+
+const getSimilarity = __webpack_require__(603)
+const matchItemProcessor = __webpack_require__(487)
+const normalizeString = __webpack_require__(284)
+const resultProcessor = __webpack_require__(358)
+const runOptionsSchema = __webpack_require__(179)
+const returnTypeEnums = __webpack_require__(464)
+const thresholdTypeEnums = __webpack_require__(634)
+
+const ALL_CLOSEST_MATCHES = returnTypeEnums.ALL_CLOSEST_MATCHES
+const ALL_MATCHES = returnTypeEnums.ALL_MATCHES
+const ALL_SORTED_MATCHES = returnTypeEnums.ALL_SORTED_MATCHES
+const FIRST_CLOSEST_MATCH = returnTypeEnums.FIRST_CLOSEST_MATCH
+const FIRST_MATCH = returnTypeEnums.FIRST_MATCH
+const RANDOM_CLOSEST_MATCH = returnTypeEnums.RANDOM_CLOSEST_MATCH
+
+const EDIT_DISTANCE = thresholdTypeEnums.EDIT_DISTANCE
+const SIMILARITY = thresholdTypeEnums.SIMILARITY
+
+/**
+ * Main function for didyoumean2
+ * @param {string} input - string that you are not sure and want to match with `matchList`
+ * @param {Object[]|string[]} matchList - List for matching with `input`
+ * @param {null|Object|undefined} options - options that allows you to modify the behavior
+ * @returns {Array|null|Object|string} - matched result(s), return object if `match` is `{Object[]}`
+ */
+function didYouMean(input, matchList, options) {
+  /*+++++++++++++++++++
+   + Initiate options +
+   +++++++++++++++++++*/
+
+  options = runOptionsSchema(options)
+
+  const returnType = options.returnType
+  const threshold = options.threshold
+  const thresholdType = options.thresholdType
+
+
+  /*++++++++++++++++++++
+   + Deal with options +
+   ++++++++++++++++++++*/
+
+  const normalizedInput = normalizeString(input, options)
+
+  let checkIfMatched // Validate if score is matched
+  let scoreProcessor // Get score
+  switch (thresholdType) {
+    case EDIT_DISTANCE:
+      checkIfMatched = (score) => score <= threshold
+      scoreProcessor = (matchItem) => {
+        return leven(
+          normalizedInput,
+          matchItemProcessor(matchItem, options)
+        )
+      }
+      break
+
+    case SIMILARITY:
+      checkIfMatched = (score) => score >= threshold
+      scoreProcessor = (matchItem) => {
+        return getSimilarity(
+          normalizedInput,
+          matchItemProcessor(matchItem, options)
+        )
+      }
+      break
+
+    /* istanbul ignore next */ // handled by simpleSchema
+    default:
+  }
+
+
+  /*+++++++++++
+   + Matching +
+   +++++++++++*/
+
+  const matchedIndexes = []
+  const matchListLen = matchList.length
+
+  switch (returnType) {
+    case ALL_CLOSEST_MATCHES:
+    case FIRST_CLOSEST_MATCH:
+    case RANDOM_CLOSEST_MATCH: {
+      const scores = []
+
+      let marginValue
+      switch (thresholdType) {
+        case EDIT_DISTANCE:
+          // Process score and save the smallest score
+          marginValue = Infinity
+          for (let i = 0; i < matchListLen; i += 1) {
+            const score = scoreProcessor(matchList[i])
+
+            if (marginValue > score) marginValue = score
+
+            scores.push(score)
+          }
+          break
+
+        case SIMILARITY:
+          // Process score and save the largest score
+          marginValue = 0
+          for (let i = 0; i < matchListLen; i += 1) {
+            const score = scoreProcessor(matchList[i])
+
+            if (marginValue < score) marginValue = score
+
+            scores.push(score)
+          }
+          break
+
+        /* istanbul ignore next */ // handled by simpleSchema
+        default:
+      }
+
+      const scoresLen = scores.length
+      for (let i = 0; i < scoresLen; i += 1) {
+        const score = scores[i]
+
+        if (checkIfMatched(score)) {
+          // Just save the closest value
+          if (score === marginValue) {
+            matchedIndexes.push(i)
+          }
+        }
+      }
+
+      break
+    }
+
+    case ALL_MATCHES:
+      for (let i = 0; i < matchListLen; i += 1) {
+        const score = scoreProcessor(matchList[i])
+
+        // save all indexes of matched scores
+        if (checkIfMatched(score)) {
+          matchedIndexes.push(i)
+        }
+      }
+
+      break
+
+    case ALL_SORTED_MATCHES: {
+      const unsortedResults = []
+      for (let i = 0; i < matchListLen; i += 1) {
+        const score = scoreProcessor(matchList[i])
+
+        // save all indexes of matched scores
+        if (checkIfMatched(score)) {
+          unsortedResults.push({
+            score: score,
+            index: i
+          })
+        }
+      }
+
+      switch (thresholdType) {
+        case EDIT_DISTANCE:
+          unsortedResults.sort((a, b) => a.score - b.score)
+          break
+
+        case SIMILARITY:
+          unsortedResults.sort((a, b) => b.score - a.score)
+          break
+
+        /* istanbul ignore next */ // handled by simpleSchema
+        default:
+      }
+
+      for (const unsortedResult of unsortedResults) {
+        matchedIndexes.push(unsortedResult.index)
+      }
+
+      break
+    }
+
+    case FIRST_MATCH:
+      for (let i = 0; i < matchListLen; i += 1) {
+        const score = scoreProcessor(matchList[i])
+
+        // Return once matched, performance is main target in this returnType
+        if (checkIfMatched(score)) {
+          matchedIndexes.push(i)
+          break
+        }
+      }
+
+      break
+
+    /* istanbul ignore next */ // handled by simpleSchema
+    default:
+  }
+
+
+  /*+++++++++++++++++++++++
+   + Process return value +
+   +++++++++++++++++++++++*/
+
+  return resultProcessor(matchList, matchedIndexes, returnType)
+}
+
+module.exports = didYouMean
+
+
+/***/ }),
 /* 717 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -109911,7 +109979,7 @@ module.exports = Object.assign(fn, figures);
 /* 849 */
 /***/ (function(module) {
 
-module.exports = {"_args":[["contentful-migration@0.17.4","/Users/shy/Documents/Contentful/action-testing/contentful-action"]],"_from":"contentful-migration@0.17.4","_id":"contentful-migration@0.17.4","_inBundle":false,"_integrity":"sha512-aF/Jz851t8GIFooprxBkEBH6vWxJDz80UPqSoJgdc61Rt3tKnUWbidNuXmP02vOTMO7NrpsLWxqyhG5+JxJ9Eg==","_location":"/contentful-migration","_phantomChildren":{"ansi-escapes":"3.2.0","axios":"0.19.2","chalk":"2.4.2","cli-cursor":"2.1.0","cli-width":"2.2.0","code-point-at":"1.1.0","contentful-sdk-core":"6.4.5","decamelize":"1.2.0","error-ex":"1.3.2","figures":"2.0.0","graceful-fs":"4.2.2","iconv-lite":"0.4.24","is-fullwidth-code-point":"2.0.0","lodash":"4.17.19","mute-stream":"0.0.7","normalize-package-data":"2.5.0","number-is-nan":"1.0.1","os-locale":"2.1.0","path-exists":"3.0.0","require-directory":"2.1.1","run-async":"2.3.0","rx-lite":"4.0.8","rx-lite-aggregates":"4.0.8","set-blocking":"2.0.0","strip-bom":"3.0.0","through":"2.3.8","tmp":"0.0.33","which-module":"2.0.0"},"_requested":{"type":"version","registry":true,"raw":"contentful-migration@0.17.4","name":"contentful-migration","escapedName":"contentful-migration","rawSpec":"0.17.4","saveSpec":null,"fetchSpec":"0.17.4"},"_requiredBy":["/"],"_resolved":"https://registry.npmjs.org/contentful-migration/-/contentful-migration-0.17.4.tgz","_spec":"0.17.4","_where":"/Users/shy/Documents/Contentful/action-testing/contentful-action","author":{"name":"Contentful GmbH"},"bin":{"contentful-migration":"bin/contentful-migration"},"bugs":{"url":"https://github.com/contentful/contentful-migration/issues"},"dependencies":{"bluebird":"^3.5.0","callsites":"^2.0.0","cardinal":"^1.0.0","chalk":"^2.2.0","contentful-management":"^5.3.0","didyoumean2":"^1.3.0","hoek":"^4.2.1","https-proxy-agent":"^2.1.0","inquirer":"^3.2.3","joi":"^10.6.0","kind-of":"^5.0.2","listr":"^0.12.0","lodash":"^4.17.4","yargs":"^8.0.2"},"description":"Migration tooling for contentful","devDependencies":{"@contentful/eslint-config-backend":"^5.0.0","@types/bluebird":"^3.5.15","@types/chai":"^4.0.4","@types/chai-as-promised":"^7.1.0","@types/hoek":"^4.1.3","@types/joi":"^10.4.4","@types/lodash":"^4.14.77","@types/mocha":"^2.2.43","@types/node":"^8.0.46","@types/sinon-chai":"^2.7.29","chai":"^4.1.2","chai-as-promised":"^7.1.1","codecov":"^3.0.4","dirty-chai":"^2.0.1","eslint":"^4.6.1","eslint-plugin-import":"^2.7.0","eslint-plugin-mocha":"^4.11.0","eslint-plugin-node":"^5.1.1","eslint-plugin-promise":"^3.5.0","eslint-plugin-standard":"^3.0.1","mocha":"^5.2.0","nixt":"^0.5.1","nock":"^9.4.2","nyc":"^11.2.1","rewire":"^2.5.2","rimraf":"^2.6.2","semantic-release":"^15.9.16","sinon":"^2.4.1","sinon-chai":"^2.13.0","source-map-support":"^0.5.0","strip-ansi":"^4.0.0","travis-deploy-once":"^5.0.8","ts-node":"^3.3.0","tslint":"^5.7.0","tslint-config-standard":"^6.0.1","typescript":"^2.5.3","uuid":"^3.3.2","zlib":"^1.0.5"},"directories":{"test":"test","lib":"lib"},"engines":{"node":">=8.0.0"},"files":["README.md","index.d.ts","CHANGELOG.md","bin","built","docs"],"homepage":"https://github.com/contentful/contentful-migration#readme","keywords":["contentful","content model","content type","migration","migrations","migrate"],"license":"MIT","main":"index","name":"contentful-migration","nyc":{"per-file":true,"include":["src/lib/**/*.js","src/lib/**/*.ts","src/bin/**/*.js","src/bin/**/*.ts","built/lib/**/*.js","built/bin/**/*.js"],"exclude":["test/**/*.spec.js","test/**/*.spec.ts","test/**/*.js","test/**/*.ts","node_modules/**/*.js","node_modules/**/*.ts","typings"],"extension":[".ts"],"all":true},"repository":{"type":"git","url":"git+https://github.com/contentful/contentful-migration.git"},"scripts":{"build":"npm run clean && tsc -p tsconfig.json","build-dev":"npm run clean && tsc -p tsconfig-dev.json","clean":"rimraf built","cover":"nyc --no-clean -s npm run test-unit && nyc --no-clean -s npm run test-integration && nyc --no-clean -s npm run test-e2e && nyc report","cover-e2e":"nyc npm run test-e2e","cover-integration":"nyc npm run test-integration","cover-unit":"nyc npm run test-unit","coverage":"npm run build && npm run cover && nyc report --reporter=text-lcov > coverage.lcov","coverage-report":"npm run coverage && codecov && rm -rf ./nyc_output && rm coverage.lcov","lint":"eslint 'examples/**/*.js' 'test/**/*.js' 'src/**/*.js' && tslint --project tsconfig-dev.json --config tslint.json","prepare":"npm run build","semantic-release":"semantic-release","test":"NOCK_RECORD=0 npm run build && npm run test-unit && npm run test-integration && npm run test-e2e && npm run lint","test-e2e":"NODE_ENV=test mocha 'test/end-to-end/**/*.spec.js'","test-integration":"NODE_ENV=test mocha --require test/integration/setup.js 'test/integration/**/*.spec.js'","test-unit":"NODE_ENV=test mocha --require test/setup-unit.js --recursive 'test/unit/**/**/*.spec.{js,ts}'","test-watch":"npm run test-unit -- --watch","travis-deploy-once":"travis-deploy-once"},"version":"0.17.4"};
+module.exports = {"_args":[["contentful-migration@0.17.4","/Users/adrian/code/contentful-action"]],"_from":"contentful-migration@0.17.4","_id":"contentful-migration@0.17.4","_inBundle":false,"_integrity":"sha512-aF/Jz851t8GIFooprxBkEBH6vWxJDz80UPqSoJgdc61Rt3tKnUWbidNuXmP02vOTMO7NrpsLWxqyhG5+JxJ9Eg==","_location":"/contentful-migration","_phantomChildren":{"ansi-escapes":"3.2.0","axios":"0.19.2","chalk":"2.4.2","cli-cursor":"2.1.0","cli-width":"2.2.0","code-point-at":"1.1.0","contentful-sdk-core":"6.4.5","decamelize":"1.2.0","error-ex":"1.3.2","figures":"2.0.0","graceful-fs":"4.2.2","iconv-lite":"0.4.24","is-fullwidth-code-point":"2.0.0","lodash":"4.17.19","mute-stream":"0.0.7","normalize-package-data":"2.5.0","number-is-nan":"1.0.1","os-locale":"2.1.0","path-exists":"3.0.0","require-directory":"2.1.1","run-async":"2.3.0","rx-lite":"4.0.8","rx-lite-aggregates":"4.0.8","set-blocking":"2.0.0","strip-bom":"3.0.0","through":"2.3.8","tmp":"0.0.33","which-module":"2.0.0"},"_requested":{"type":"version","registry":true,"raw":"contentful-migration@0.17.4","name":"contentful-migration","escapedName":"contentful-migration","rawSpec":"0.17.4","saveSpec":null,"fetchSpec":"0.17.4"},"_requiredBy":["/"],"_resolved":"https://registry.npmjs.org/contentful-migration/-/contentful-migration-0.17.4.tgz","_spec":"0.17.4","_where":"/Users/adrian/code/contentful-action","author":{"name":"Contentful GmbH"},"bin":{"contentful-migration":"bin/contentful-migration"},"bugs":{"url":"https://github.com/contentful/contentful-migration/issues"},"dependencies":{"bluebird":"^3.5.0","callsites":"^2.0.0","cardinal":"^1.0.0","chalk":"^2.2.0","contentful-management":"^5.3.0","didyoumean2":"^1.3.0","hoek":"^4.2.1","https-proxy-agent":"^2.1.0","inquirer":"^3.2.3","joi":"^10.6.0","kind-of":"^5.0.2","listr":"^0.12.0","lodash":"^4.17.4","yargs":"^8.0.2"},"description":"Migration tooling for contentful","devDependencies":{"@contentful/eslint-config-backend":"^5.0.0","@types/bluebird":"^3.5.15","@types/chai":"^4.0.4","@types/chai-as-promised":"^7.1.0","@types/hoek":"^4.1.3","@types/joi":"^10.4.4","@types/lodash":"^4.14.77","@types/mocha":"^2.2.43","@types/node":"^8.0.46","@types/sinon-chai":"^2.7.29","chai":"^4.1.2","chai-as-promised":"^7.1.1","codecov":"^3.0.4","dirty-chai":"^2.0.1","eslint":"^4.6.1","eslint-plugin-import":"^2.7.0","eslint-plugin-mocha":"^4.11.0","eslint-plugin-node":"^5.1.1","eslint-plugin-promise":"^3.5.0","eslint-plugin-standard":"^3.0.1","mocha":"^5.2.0","nixt":"^0.5.1","nock":"^9.4.2","nyc":"^11.2.1","rewire":"^2.5.2","rimraf":"^2.6.2","semantic-release":"^15.9.16","sinon":"^2.4.1","sinon-chai":"^2.13.0","source-map-support":"^0.5.0","strip-ansi":"^4.0.0","travis-deploy-once":"^5.0.8","ts-node":"^3.3.0","tslint":"^5.7.0","tslint-config-standard":"^6.0.1","typescript":"^2.5.3","uuid":"^3.3.2","zlib":"^1.0.5"},"directories":{"test":"test","lib":"lib"},"engines":{"node":">=8.0.0"},"files":["README.md","index.d.ts","CHANGELOG.md","bin","built","docs"],"homepage":"https://github.com/contentful/contentful-migration#readme","keywords":["contentful","content model","content type","migration","migrations","migrate"],"license":"MIT","main":"index","name":"contentful-migration","nyc":{"per-file":true,"include":["src/lib/**/*.js","src/lib/**/*.ts","src/bin/**/*.js","src/bin/**/*.ts","built/lib/**/*.js","built/bin/**/*.js"],"exclude":["test/**/*.spec.js","test/**/*.spec.ts","test/**/*.js","test/**/*.ts","node_modules/**/*.js","node_modules/**/*.ts","typings"],"extension":[".ts"],"all":true},"repository":{"type":"git","url":"git+https://github.com/contentful/contentful-migration.git"},"scripts":{"build":"npm run clean && tsc -p tsconfig.json","build-dev":"npm run clean && tsc -p tsconfig-dev.json","clean":"rimraf built","cover":"nyc --no-clean -s npm run test-unit && nyc --no-clean -s npm run test-integration && nyc --no-clean -s npm run test-e2e && nyc report","cover-e2e":"nyc npm run test-e2e","cover-integration":"nyc npm run test-integration","cover-unit":"nyc npm run test-unit","coverage":"npm run build && npm run cover && nyc report --reporter=text-lcov > coverage.lcov","coverage-report":"npm run coverage && codecov && rm -rf ./nyc_output && rm coverage.lcov","lint":"eslint 'examples/**/*.js' 'test/**/*.js' 'src/**/*.js' && tslint --project tsconfig-dev.json --config tslint.json","prepare":"npm run build","semantic-release":"semantic-release","test":"NOCK_RECORD=0 npm run build && npm run test-unit && npm run test-integration && npm run test-e2e && npm run lint","test-e2e":"NODE_ENV=test mocha 'test/end-to-end/**/*.spec.js'","test-integration":"NODE_ENV=test mocha --require test/integration/setup.js 'test/integration/**/*.spec.js'","test-unit":"NODE_ENV=test mocha --require test/setup-unit.js --recursive 'test/unit/**/**/*.spec.{js,ts}'","test-watch":"npm run test-unit -- --watch","travis-deploy-once":"travis-deploy-once"},"version":"0.17.4"};
 
 /***/ }),
 /* 850 */

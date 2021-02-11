@@ -14,7 +14,7 @@ async function run() {
     const {default: runMigration} = require('contentful-migration/built/bin/cli');
 
     // utility fns
-    const getVersionOfFile = (file) => file.replace('.js', '').replace(/_/g, '.');
+    const getVersionOfFile = (file) => parseInt(file.replace('.js', '').replace(/_/g, '.'));
     const getFileOfVersion = (version) => version.replace(/\./g, '_') + '.js';
 
     const getBranchName = () => {
@@ -134,7 +134,7 @@ async function run() {
     console.log('Read all the available migrations from the file system');
     const availableMigrations = (await readdirAsync(MIGRATIONS_DIR))
       .filter(file => /^\d+?\.js$/.test(file))
-      .map(file => getVersionOfFile(file));
+      .map(file => getVersionOfFile(file)).sort((a,b)=> a-b).map(num=> `${num}.js`);
 
     // ---------------------------------------------------------------------------
     console.log('Figure out latest ran migration of the contentful space');
