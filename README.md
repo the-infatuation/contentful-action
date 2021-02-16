@@ -106,7 +106,7 @@ Please look at the [demo file](.github/workflows/main.yml).
 ```yml
 - name: Contentful Migration
   id: migrate
-  uses: contentful/contentful-migration-automation@1
+  uses: contentful/contentful-migration-automation@@v2.0.0
   with:
     # delete_feature: true
     # set_alias: true
