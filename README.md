@@ -14,6 +14,7 @@ An action for automating contentful migrations.
     + [Examples](#examples)
 * [Automations](#automations)
 * [Versioning](#versioning)
+* [LOG_LEVEL](#log_level)
 * [Arguments](#arguments)
 * [Workflow](#workflow)
 
