@@ -45,8 +45,8 @@ There are several options to allow customizing this action.
 ## Environment names
 
 You can define the `master_pattern` and `feature_pattern`.
-**Master** is used as alias target-environmnets on contentful.
-**Feature** is used during development as a sandbox environmnets on contentful.
+**Master** is used as alias target-environments on contentful.
+**Feature** is used during development as a sandbox environments on contentful.
 
 These helpers are available:
 
@@ -92,8 +92,8 @@ Name | Type | Required | Default  | Description
 **management_api_key**   | `string`  | Yes | `undefined` | The management-api key for contentful
 delete_feature           | `boolean` | No  | `false` | Deletes sandbox environment if the head branch is merged
 set_alias                | `boolean` | No  | `false` | Aliases master the new master environment
-master_pattern           | `string`  | No  | `master-[YYYY]-[MM]-[DD]-[hh][mm]` | The pattern that should be used for the new master environmnet on contentful
-feature_pattern          | `string`  | No  | `GH-[branch]` | The pattern that should be used for the new feature environmnets on contentful
+master_pattern           | `string`  | No  | `master-[YYYY]-[MM]-[DD]-[hh][mm]` | The pattern that should be used for the new master environment on contentful
+feature_pattern          | `string`  | No  | `GH-[branch]` | The pattern that should be used for the new feature environments on contentful
 version_content_type     | `string`  | No  | `versionTracking` | The content-type that tracks the version
 version_field            | `string`  | No  | `version` | The field-id that carries the version number
 migrations_dir           | `string`  | No  | `migrations` | The directory to look for migrations
