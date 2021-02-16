@@ -20,7 +20,7 @@ An action for automating contentful migrations.
 
 ## Usage
 
-This action runs migrations on your contentful space. PLease add your migration scripts to a directory called
+This action runs migrations on your contentful space. Please add your migration scripts to a directory called
 `migrations` *(configurable)* and name them `[n].js` where `[n]` is the current version of your content-model.
 Versions are integers (`1.js`, `2.js`, ...)
 
@@ -36,7 +36,7 @@ module.exports = function () {};
 For every new version we can now increase the version (`2.js`, `3.js`, ...). Per default, this action looks for a
 directory labeled `migrations` but it's configurable via the arg `migrations_dir`.
 
-Next we can adjust our workflow file to use this action. YOu have to include your `space_id` and `management_api_key`
+Next we can adjust our workflow file to use this action. You have to include your `space_id` and `management_api_key`
 from your Contentful space.
 
 There are several options to allow customizing this action.
