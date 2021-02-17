@@ -110,7 +110,7 @@ Please look at the [demo file](.github/workflows/main.yml).
 ```yml
 - name: Contentful Migration
   id: migrate
-  uses: everdevs/contentful-migration-automation@@v2.0.0
+  uses: everdevs/contentful-migration-automation@v2
   with:
     # delete_feature: true
     # set_alias: true
