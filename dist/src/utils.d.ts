@@ -15,13 +15,15 @@ export declare const delay: (time?: number) => Promise<void>;
 /**
  * Convert fileNames to integers
  * @example
- * filenameToVersion("1.js") // 1
+ * filenameToVersion("1.js") // "1"
+ * filenameToVersion("1.0.1.js") // "1.0.1"
  */
-export declare const filenameToVersion: (file: string) => number;
+export declare const filenameToVersion: (file: string) => string;
 /**
  * Convert integers to filenames
  * @example
- * versionToFilename(1) // 1.js
+ * versionToFilename("1") // "1.js"
+ * versionToFilename("1.0.1") // "1.0.1.js"
  */
 export declare const versionToFilename: (version: string) => string;
 /**

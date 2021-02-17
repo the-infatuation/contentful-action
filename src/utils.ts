@@ -43,18 +43,20 @@ export const delay = (time = DELAY): Promise<void> =>
 /**
  * Convert fileNames to integers
  * @example
- * filenameToVersion("1.js") // 1
+ * filenameToVersion("1.js") // "1"
+ * filenameToVersion("1.0.1.js") // "1.0.1"
  */
-export const filenameToVersion = (file: string): number =>
-  parseInt(file.replace(/\.js$/, "").replace(/_/g, "."), 10);
+export const filenameToVersion = (file: string): string =>
+  file.replace(/\.js$/, "").replace(/_/g, ".");
 
 /**
  * Convert integers to filenames
  * @example
- * versionToFilename(1) // 1.js
+ * versionToFilename("1") // "1.js"
+ * versionToFilename("1.0.1") // "1.0.1.js"
  */
 export const versionToFilename = (version: string): string =>
-  version.replace(/\./g, "_") + ".js";
+   `${version.replace(/\\./g, "_")}.js`;
 
 /**
  * Convert a branchName to a valid environmentName

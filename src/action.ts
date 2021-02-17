@@ -4,6 +4,8 @@ import { runMigration } from "contentful-migration/built/bin/cli";
 import { readdir } from "fs";
 import path from "path";
 import { promisify } from "util";
+import toSemver from 'to-semver'
+
 import {
   CONTENTFUL_ALIAS,
   DELETE_FEATURE,
@@ -88,11 +90,13 @@ export const runAction = async (space): Promise<void> => {
   Logger.verbose("Read all the available migrations from the file system");
   // Check for available migrations
   // Migration scripts need to be sorted in order to run without conflicts
-  const availableMigrations = (await readdirAsync(MIGRATIONS_DIR))
-    .filter((file) => /^\d+?\.js$/.test(file))
-    .map((file) => filenameToVersion(file))
-    .sort((a, b) => a - b)
-    .map((num) => `${num}`);
+  const availableMigrations = toSemver(
+    (await readdirAsync(MIGRATIONS_DIR)).map((file) => filenameToVersion(file)), {clean: false}
+  ).reverse();
+
+  Logger.verbose(
+    `versionOrder: ${JSON.stringify(availableMigrations, null, 4)}`
+  );
 
   Logger.verbose("Find current version of the contentful space");
   const { items: versions } = await environment.getEntries({
