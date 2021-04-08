@@ -1,5 +1,5 @@
-name: "Contentful Migration Automation"
-description: "Fully automated and configurable migrations against a contentful space"
+name: 'Contentful Migration Action'
+description: 'Run a Migration against your Contentful space'
 inputs:
   delete_feature:
     description: "The head branch will be deleted after it was merged"

@@ -2,12 +2,11 @@
 
 An action for automating contentful migrations.
 
-> To learn about making changes to a content model and entries on a Contentful Space using the Contentful CLI check out
-> our [tutorial on Scripting Migrations](https://www.contentful.com/developers/docs/tutorials/cli/scripting-migrations/).
-> You can read our [conceptual guide](https://www.contentful.com/developers/docs/concepts/deployment-pipeline/) on how to
-> utilize Contentful Environments inside your continuous delivery pipeline.
-> 
-> - via [contentful/contentful-action](https://github.com/contentful/contentful-action)
+To learn about making changes to a content model and entries on a Contentful Space using the Contentful CLI check out
+our [tutorial on Scripting Migrations](https://www.contentful.com/developers/docs/tutorials/cli/scripting-migrations/).
+You can read our [conceptual guide](https://www.contentful.com/developers/docs/concepts/deployment-pipeline/) on how to
+utilize Contentful Environments inside your continuous delivery pipeline.
+
 
 * [Usage](#usage)
 * [Environment names](#environment-names)
@@ -127,4 +126,4 @@ Please look at the [demo file](.github/workflows/main.yml).
 
 # License
 
-Copyright (c) 2021 Evernest GmbH. Code released under the MIT license. See [LICENSE](LICENSE) for further details.
+Copyright (c) 2021 Contentful GmbH. Code released under the MIT license.. See [LICENSE](LICENSE) for further details.
