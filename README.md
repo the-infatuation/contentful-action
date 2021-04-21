@@ -109,7 +109,7 @@ Please look at the [demo file](.github/workflows/main.yml).
 ```yml
 - name: Contentful Migration
   id: migrate
-  uses: everdevs/contentful-migration-automation@v2
+  uses: contentful-userland/contentful-migration-automation@v2
   with:
     # delete_feature: true
     # set_alias: true
@@ -123,6 +123,12 @@ Please look at the [demo file](.github/workflows/main.yml).
   # env:
     # LOG_LEVEL: verbose
 ```
+
+## Contributors 
+Thanks to our community members who have contributed code to this action. A full list of community contributors to the action are listed below, in alphabetical order:
+
+[TillaTheHun0](TillaTheHun0)
+[pixelass](pixelass)
 
 # License
 
