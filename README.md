@@ -127,8 +127,8 @@ Please look at the [demo file](.github/workflows/main.yml).
 ## Contributors 
 Thanks to our community members who have contributed code to this action. A full list of community contributors to the action are listed below, in alphabetical order:
 
-[TillaTheHun0](TillaTheHun0)
-[pixelass](pixelass)
+- [TillaTheHun0](https://github.com/tillaTheHun0)
+- [pixelass](https://github.com/pixelass)
 
 # License
 
