@@ -98707,6 +98707,7 @@ var utils_a;
 
 // Force colors on github
 source_default.a.level = 3;
+var stringifyObject = function (obj) { return JSON.stringify(obj, null, 2); };
 var Logger = {
     log: function (message) {
         console.log(source_default().white(message));
@@ -98719,6 +98720,9 @@ var Logger = {
     },
     warn: function (message) {
         console.log("⚠️", source_default().yellow(message));
+    },
+    info: function (message) {
+        console.log("ℹ️", source_default().blue(message));
     },
     verbose: function (message) {
         if (LOG_LEVEL === "verbose") {
@@ -98741,6 +98745,8 @@ var delay = function (time) {
  * filenameToVersion("1.0.1.js") // "1.0.1"
  */
 var filenameToVersion = function (file) {
+    Logger.success("filenameToVersion function");
+    Logger.info("file: " + file);
     return file.replace(/\.js$/, "").replace(/_/g, ".");
 };
 /**
@@ -98750,6 +98756,8 @@ var filenameToVersion = function (file) {
  * versionToFilename("1.0.1") // "1.0.1.js"
  */
 var versionToFilename = function (version) {
+    Logger.success("versionToFilename function");
+    Logger.info("version: " + version);
     return version.replace(/\\./g, "_") + ".js";
 };
 /**
@@ -98757,7 +98765,16 @@ var versionToFilename = function (version) {
  * @param branchName
  */
 var branchNameToEnvironmentName = function (branchName) {
-    return branchName.replace(/[\/_.]/g, "-");
+    Logger.success("branchNameToEnvironmentName function");
+    Logger.info("branchName: " + branchName);
+    try {
+        var newBranchName = branchName.replace(/[\/_.]/g, "-");
+        return newBranchName;
+    }
+    catch (e) {
+        console.trace('branchNameToEnvironmentName error', e);
+        throw new Error(e);
+    }
 };
 var Matcher;
 (function (Matcher) {
@@ -98787,6 +98804,9 @@ var matchers = (utils_a = {},
     },
     utils_a[Matcher.DD] = function (date) { return ("" + date.getDate()).padStart(2, "0"); },
     utils_a[Matcher.branch] = function (branchName) {
+        Logger.success('matchers[Matcher.branch]');
+        Logger.info("Matcher.branch " + Matcher.branch);
+        Logger.info("branchName: " + branchName);
         return branchNameToEnvironmentName(branchName);
     },
     utils_a);
@@ -98797,6 +98817,9 @@ var matchers = (utils_a = {},
  */
 var getNameFromPattern = function (pattern, _a) {
     var _b = _a === void 0 ? {} : _a, branchName = _b.branchName;
+    Logger.success("getNameFromPattern function");
+    Logger.info("pattern: " + pattern);
+    Logger.info("branchName: " + branchName);
     var date = new Date();
     return pattern.replace(/\[(YYYY|YY|MM|DD|hh|mm|ss|branch)]/g, function (substring, match) {
         switch (match) {
@@ -98822,6 +98845,9 @@ var getBranchNames = function () {
     var _a = github.context, eventName = _a.eventName, payload = _a.payload;
     var defaultBranch = payload.repository.default_branch;
     // Check the eventName
+    Logger.success('getBranchNames function');
+    Logger.info("eventName: " + eventName);
+    Logger.info("payload: " + stringifyObject(payload));
     switch (eventName) {
         // If pullRequest we need to get the head and base
         case EventNames.pullRequest:
@@ -98846,12 +98872,15 @@ var getBranchNames = function () {
  * @param branchNames
  */
 var getEnvironment = function (space, branchNames) { return Object(tslib.__awaiter)(void 0, void 0, void 0, function () {
-    var environmentNames, environmentType, environmentId, environment, e_1;
+    var environmentNames, environmentType, isEnvTypeAlias, environmentId, environment, e_1;
     var _a, _b;
     var _c;
     return Object(tslib.__generator)(this, function (_d) {
         switch (_d.label) {
             case 0:
+                Logger.success('getEnvironment function');
+                Logger.info("space " + stringifyObject(space));
+                Logger.info("branchNames " + stringifyObject(branchNames));
                 environmentNames = {
                     base: branchNameToEnvironmentName(branchNames.baseRef),
                     head: branchNames.headRef
@@ -98861,16 +98890,26 @@ var getEnvironment = function (space, branchNames) { return Object(tslib.__await
                 // If the Pull Request is merged and the base is the repository default_name (master|main, ...)
                 // Then create an environment name for the given master_pattern
                 // Else create an environment name for the given feature_pattern
-                Logger.verbose("MASTER_PATTERN: " + MASTER_PATTERN + " | FEATURE_PATTERN: " + FEATURE_PATTERN);
+                Logger.info("MASTER_PATTERN: " + MASTER_PATTERN + " | FEATURE_PATTERN: " + FEATURE_PATTERN);
+                Logger.info("branchNames.baseRef: " + branchNames.baseRef);
+                Logger.info("branchNames.defaultBranch: " + branchNames.defaultBranch);
+                Logger.info("github.context.payload: " + stringifyObject(github.context.payload));
                 environmentType = branchNames.baseRef === branchNames.defaultBranch && ((_c = github.context.payload.pull_request) === null || _c === void 0 ? void 0 : _c.merged)
                     ? CONTENTFUL_ALIAS
                     : "feature";
+                Logger.info("environmentType: " + environmentType);
+                Logger.info("CONTENTFUL_ALIAS: " + CONTENTFUL_ALIAS);
+                isEnvTypeAlias = environmentType === CONTENTFUL_ALIAS;
+                Logger.info("isEnvTypeAlias: " + isEnvTypeAlias);
+                Logger.info("MASTER_PATTERN: " + MASTER_PATTERN);
+                Logger.info("FEATURE_PATTERN: " + FEATURE_PATTERN);
+                Logger.info("branchNames.headRef: " + branchNames.headRef);
                 environmentId = environmentType === CONTENTFUL_ALIAS
                     ? getNameFromPattern(MASTER_PATTERN)
                     : getNameFromPattern(FEATURE_PATTERN, {
                         branchName: branchNames.headRef,
                     });
-                Logger.verbose("environmentId: \"" + environmentId + "\"");
+                Logger.info("environmentId: \"" + environmentId + "\"");
                 if (!(environmentType === CONTENTFUL_ALIAS)) return [3 /*break*/, 2];
                 _a = {
                     environmentType: environmentType,
