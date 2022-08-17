@@ -18,6 +18,8 @@ import {
 // Force colors on github
 chalk.level = 3;
 
+const stringifyObject = (obj) => JSON.stringify(obj, null, 2)
+
 export const Logger = {
   log(message) {
     console.log(chalk.white(message));
@@ -30,6 +32,9 @@ export const Logger = {
   },
   warn(message) {
     console.log("⚠️", chalk.yellow(message));
+  },
+  info(message) {
+    console.log("ℹ️", chalk.blue(message));
   },
   verbose(message) {
     if (LOG_LEVEL === "verbose") {
@@ -51,8 +56,11 @@ export const delay = (time = DELAY): Promise<void> =>
  * filenameToVersion("1.js") // "1"
  * filenameToVersion("1.0.1.js") // "1.0.1"
  */
-export const filenameToVersion = (file: string): string =>
-  file.replace(/\.js$/, "").replace(/_/g, ".");
+export const filenameToVersion = (file: string): string => {
+  Logger.success(`filenameToVersion function`)
+  Logger.info(`file: ${file}`)
+  return file.replace(/\.js$/, "").replace(/_/g, ".");
+}
 
 /**
  * Convert versions to filenames
@@ -60,15 +68,27 @@ export const filenameToVersion = (file: string): string =>
  * versionToFilename("1") // "1.js"
  * versionToFilename("1.0.1") // "1.0.1.js"
  */
-export const versionToFilename = (version: string): string =>
-  `${version.replace(/\\./g, "_")}.js`;
+export const versionToFilename = (version: string): string => {
+  Logger.success(`versionToFilename function`)
+  Logger.info(`version: ${version}`)
+  return `${version.replace(/\\./g, "_")}.js`;
+}
 
 /**
  * Convert a branchName to a valid environmentName
  * @param branchName
  */
-export const branchNameToEnvironmentName = (branchName: string): string =>
-  branchName.replace(/[\/_.]/g, "-");
+export const branchNameToEnvironmentName = (branchName: string): string => {
+  Logger.success(`branchNameToEnvironmentName function`)
+  Logger.info(`branchName: ${branchName}`)
+  try {
+    const newBranchName = branchName.replace(/[\/_.]/g, "-");
+    return newBranchName
+  } catch (e) {
+    console.trace('branchNameToEnvironmentName error', e)
+    throw new Error(e)
+  }
+}
 
 export enum Matcher {
   YY = "YY",
@@ -93,8 +113,12 @@ export const matchers = {
   [Matcher.MM]: (date: Date): string =>
     `${date.getUTCMonth() + 1}`.padStart(2, "0"),
   [Matcher.DD]: (date: Date): string => `${date.getDate()}`.padStart(2, "0"),
-  [Matcher.branch]: (branchName: string): string =>
-    branchNameToEnvironmentName(branchName),
+  [Matcher.branch]: (branchName: string): string => {
+    Logger.success('matchers[Matcher.branch]')
+    Logger.info(`Matcher.branch ${Matcher.branch}`)
+    Logger.info(`branchName: ${branchName}`)
+    return branchNameToEnvironmentName(branchName);
+  }
 };
 
 /**
@@ -106,6 +130,9 @@ export const getNameFromPattern = (
   pattern: string,
   { branchName }: NameFromPatternArgs = {}
 ): string => {
+  Logger.success(`getNameFromPattern function`);
+  Logger.info(`pattern: ${pattern}`);
+  Logger.info(`branchName: ${branchName}`);
   const date = new Date();
   return pattern.replace(
     /\[(YYYY|YY|MM|DD|hh|mm|ss|branch)]/g,
@@ -136,6 +163,9 @@ export const getBranchNames = (): BranchNames => {
   const { default_branch: defaultBranch } = payload.repository;
 
   // Check the eventName
+  Logger.success('getBranchNames function')
+  Logger.info(`eventName: ${eventName}`)
+  Logger.info(`payload: ${stringifyObject(payload)}`)
   switch (eventName) {
     // If pullRequest we need to get the head and base
     case EventNames.pullRequest:
@@ -164,6 +194,9 @@ export const getEnvironment = async (
   space: Space,
   branchNames: BranchNames
 ): Promise<EnvironmentProps> => {
+  Logger.success('getEnvironment function')
+  Logger.info(`space ${stringifyObject(space)}`)
+  Logger.info(`branchNames ${stringifyObject(branchNames)}`)
   const environmentNames = {
     base: branchNameToEnvironmentName(branchNames.baseRef),
     head: branchNames.headRef
@@ -173,22 +206,32 @@ export const getEnvironment = async (
   // If the Pull Request is merged and the base is the repository default_name (master|main, ...)
   // Then create an environment name for the given master_pattern
   // Else create an environment name for the given feature_pattern
-  Logger.verbose(
+  Logger.info(
     `MASTER_PATTERN: ${MASTER_PATTERN} | FEATURE_PATTERN: ${FEATURE_PATTERN}`
   );
+  Logger.info(`branchNames.baseRef: ${branchNames.baseRef}`);
+  Logger.info(`branchNames.defaultBranch: ${branchNames.defaultBranch}`);
+  Logger.info(`github.context.payload: ${stringifyObject(github.context.payload)}`)
+  // github.context.payload.pull_request?.merged... however for testing we're pushing directly to main...
   const environmentType =
     branchNames.baseRef === branchNames.defaultBranch &&
     github.context.payload.pull_request?.merged
       ? CONTENTFUL_ALIAS
       : "feature";
-
+  Logger.info(`environmentType: ${environmentType}` );
+  Logger.info(`CONTENTFUL_ALIAS: ${CONTENTFUL_ALIAS}` );
+  const isEnvTypeAlias = environmentType === CONTENTFUL_ALIAS
+  Logger.info(`isEnvTypeAlias: ${isEnvTypeAlias}`);
+  Logger.info(`MASTER_PATTERN: ${MASTER_PATTERN}`);
+  Logger.info(`FEATURE_PATTERN: ${FEATURE_PATTERN}`);
+  Logger.info(`branchNames.headRef: ${branchNames.headRef}`);
   const environmentId =
     environmentType === CONTENTFUL_ALIAS
       ? getNameFromPattern(MASTER_PATTERN)
       : getNameFromPattern(FEATURE_PATTERN, {
           branchName: branchNames.headRef,
         });
-  Logger.verbose(`environmentId: "${environmentId}"`);
+  Logger.info(`environmentId: "${environmentId}"`);
 
   // If environment matches ${CONTENTFUL_ALIAS} ("master")
   // Then return it without further actions

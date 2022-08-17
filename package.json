@@ -20,8 +20,8 @@
     "@actions/core": "^1.1.1",
     "@actions/github": "^3.0.0",
     "chalk": "^4.1.0",
-    "contentful-management": "^6.2.0-beta0",
-    "contentful-migration": "^0.17.1-beta0",
+    "contentful-management": "^10.6.2",
+    "contentful-migration": "^4.9.1",
     "to-semver": "^3.0.0",
     "tslib": "^2.1.0"
   },
@@ -30,6 +30,6 @@
     "eslint": "^6.3.0",
     "jest": "^24.9.0",
     "prettier": "^2.2.1",
-    "typescript": "^4.1.5"
+    "typescript": "^4.7.3"
   }
 }
