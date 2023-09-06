@@ -12,6 +12,7 @@ export const {
   INPUT_MASTER_PATTERN,
   INPUT_VERSION_CONTENT_TYPE,
   INPUT_VERSION_FIELD,
+  INPUT_CONTENTFUL_ALIAS,
 } = process.env;
 
 const booleanOr = (str: string, fallback: boolean): boolean => {
@@ -32,6 +33,7 @@ export const DEFAULT_VERSION_CONTENT_TYPE = "versionTracking";
 export const DEFAULT_VERSION_FIELD = "version";
 export const DEFAULT_DELETE_FEATURE = false;
 export const DEFAULT_SET_ALIAS = false;
+export const DEFAULT_CONTENTFUL_ALIAS = "master";
 
 export const VERSION_CONTENT_TYPE =
   INPUT_VERSION_CONTENT_TYPE || DEFAULT_VERSION_CONTENT_TYPE;
@@ -48,6 +50,6 @@ export const MIGRATIONS_DIR = path.join(
   INPUT_MIGRATIONS_DIR || DEFAULT_MIGRATIONS_DIR
 );
 
-export const CONTENTFUL_ALIAS = "master";
+export const CONTENTFUL_ALIAS = INPUT_CONTENTFUL_ALIAS || DEFAULT_CONTENTFUL_ALIAS;
 export const DELAY = 3000;
 export const MAX_NUMBER_OF_TRIES = 10;
