@@ -79,6 +79,8 @@ the sandbox environment.
 `set_alias`: Will set the alias to the new master environment once the feature has been merged. You might want to
 manually set the alias from the GUI. 
 
+`contentful_alias`: Will use as the alias to update. Defaults to master
+
 ## Versioning
 
 Please read the usage info above. The content-type and the field-id are configurable. 
@@ -95,6 +97,7 @@ Name | Type | Required | Default  | Description
 **management_api_key**   | `string`  | Yes | `undefined` | The management-api key for contentful
 delete_feature           | `boolean` | No  | `false` | Deletes sandbox environment if the head branch is merged
 set_alias                | `boolean` | No  | `false` | Aliases master the new master environment
+contentful_alias         | `string`  | No  | `master` | Alias to update
 master_pattern           | `string`  | No  | `master-[YYYY]-[MM]-[DD]-[hh][mm]` | The pattern that should be used for the new master environment on contentful
 feature_pattern          | `string`  | No  | `GH-[branch]` | The pattern that should be used for the new feature environments on contentful
 version_content_type     | `string`  | No  | `versionTracking` | The content-type that tracks the version
@@ -113,6 +116,7 @@ Please look at the [demo file](.github/workflows/main.yml).
   with:
     # delete_feature: true
     # set_alias: true
+    # contentful_alias: "staging"
     # master_pattern: "main-[YY]-[MM]-[DD]-[hh]-[mm]"
     # feature_pattern: "sandbox-[branch]"
     # version_field: versionCounter

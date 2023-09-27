@@ -21,6 +21,7 @@ jobs:
       with:
         delete_feature: false
         set_alias: true
+        contentful_alias: "staging"
         master_pattern: "prod-[DD].[MM].[YYYY]-[hh][mm][ss]"
         feature_pattern: "sandbox-[branch]"
         version_field: version

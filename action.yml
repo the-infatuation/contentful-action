@@ -5,6 +5,8 @@ inputs:
     description: "The head branch will be deleted after it was merged"
   set_alias:
     description: "The master will be aliased to the new master"
+  contentful_alias:
+    description: "Specify a different alias to update (default: master)"
   master_pattern:
     description: "The pattern that should be used for the new master"
   feature_pattern:
