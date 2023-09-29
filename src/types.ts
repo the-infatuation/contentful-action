@@ -15,10 +15,8 @@ export interface EnvironmentNames {
   head: string | null;
 }
 
-type EnvironmentType = "master" | "feature";
-
 export interface EnvironmentProps {
-  environmentType: EnvironmentType;
+  environmentType: string;
   environmentNames: EnvironmentNames;
   environmentId: string;
   environment: Environment;
