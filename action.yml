@@ -28,7 +28,7 @@ outputs:
   environment_name:
     description: "Contentful environment name"
 runs:
-  using: "node12"
+  using: "node20"
   main: "dist/index.js"
 branding:
   icon: "upload-cloud"
