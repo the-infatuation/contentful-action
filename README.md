@@ -68,7 +68,7 @@ These helpers are available:
 - `production-[YYYY][MM][DD][hh][mm]`: `production-20210211212032`
 - `sandbox-[branch]` (`feat/my-feature`): `sandbox-feat-my-feature`
 - `pr-[branch]` (`feat/add-something-1.2.3_2`): `pr-feat-add-something-1-2-3-2`
-- `release-[tag]` (`v1.2.4`): `release-v1.2.4`
+- `release-[tag]` (`v1.2.4`): `release-v1-2-4`
 
 ## Automations
 
