@@ -40,7 +40,8 @@ export declare enum Matcher {
     hh = "hh",
     mm = "mm",
     ss = "ss",
-    branch = "branch"
+    branch = "branch",
+    tag = "tag"
 }
 export declare const matchers: {
     ss: (date: Date) => string;
@@ -51,6 +52,7 @@ export declare const matchers: {
     MM: (date: Date) => string;
     DD: (date: Date) => string;
     branch: (branchName: string) => string;
+    tag: (tag: string) => string;
 };
 /**
  *

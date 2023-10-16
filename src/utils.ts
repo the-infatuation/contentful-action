@@ -99,6 +99,7 @@ export enum Matcher {
   mm = "mm",
   ss = "ss",
   branch = "branch",
+  tag = "tag",
 }
 
 export const matchers = {
@@ -118,6 +119,12 @@ export const matchers = {
     Logger.info(`Matcher.branch ${Matcher.branch}`)
     Logger.info(`branchName: ${branchName}`)
     return branchNameToEnvironmentName(branchName);
+  },
+  [Matcher.tag]: (tag: string): string => {
+    Logger.success('matchers[Matcher.tag]')
+    Logger.info(`Matcher.tag ${Matcher.tag}`)
+    Logger.info(`tag: ${tag}`)
+    return branchNameToEnvironmentName(tag);
   }
 };
 
@@ -135,11 +142,13 @@ export const getNameFromPattern = (
   Logger.info(`branchName: ${branchName}`);
   const date = new Date();
   return pattern.replace(
-    /\[(YYYY|YY|MM|DD|hh|mm|ss|branch)]/g,
+    /\[(YYYY|YY|MM|DD|hh|mm|ss|branch|tag)]/g,
     (substring, match: Matcher) => {
       switch (match) {
         case Matcher.branch:
           return matchers[Matcher.branch](branchName);
+        case Matcher.tag:
+          return matchers[Matcher.tag](process.env.GITHUB_REF_NAME);
         case Matcher.YYYY:
         case Matcher.YY:
         case Matcher.MM:
@@ -215,11 +224,11 @@ export const getEnvironment = async (
   // github.context.payload.pull_request?.merged... however for testing we're pushing directly to main...
   const environmentType =
     branchNames.baseRef === branchNames.defaultBranch &&
-    github.context.payload.pull_request?.merged
+      github.context.payload.pull_request?.merged
       ? CONTENTFUL_ALIAS
       : "feature";
-  Logger.info(`environmentType: ${environmentType}` );
-  Logger.info(`CONTENTFUL_ALIAS: ${CONTENTFUL_ALIAS}` );
+  Logger.info(`environmentType: ${environmentType}`);
+  Logger.info(`CONTENTFUL_ALIAS: ${CONTENTFUL_ALIAS}`);
   const isEnvTypeAlias = environmentType === CONTENTFUL_ALIAS
   Logger.info(`isEnvTypeAlias: ${isEnvTypeAlias}`);
   Logger.info(`MASTER_PATTERN: ${MASTER_PATTERN}`);
@@ -229,8 +238,8 @@ export const getEnvironment = async (
     environmentType === CONTENTFUL_ALIAS
       ? getNameFromPattern(MASTER_PATTERN)
       : getNameFromPattern(FEATURE_PATTERN, {
-          branchName: branchNames.headRef,
-        });
+        branchName: branchNames.headRef,
+      });
   Logger.info(`environmentId: "${environmentId}"`);
 
   // If environment matches ${CONTENTFUL_ALIAS} ("master")
