@@ -104,6 +104,8 @@ feature_pattern          | `string`  | No  | `GH-[branch]` | The pattern that sh
 version_content_type     | `string`  | No  | `versionTracking` | The content-type that tracks the version
 version_field            | `string`  | No  | `version` | The field-id that carries the version number
 migrations_dir           | `string`  | No  | `migrations` | The directory to look for migrations
+delay                    | `number`  | No  | `3000` | The default delay between attempts for repeatable actions
+max_number_of_tries      | `number`  | No  | `10` | The number of times action will retry a repeatable action
 
 
 ## Workflow

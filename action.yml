@@ -21,6 +21,10 @@ inputs:
     description: "The id of the contentful space"
   management_api_key:
     description: "The management-api key for contentful"
+  delay:
+    description: "The default delay between attempts for repeatable actions"
+  max_number_of_tries:
+    description: "The number of times action will retry a repeatable action"
 
 outputs:
   environment_url:

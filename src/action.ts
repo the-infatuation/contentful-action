@@ -64,6 +64,11 @@ export const runAction = async (space): Promise<void> => {
     count++;
   }
 
+  if (count >= MAX_NUMBER_OF_TRIES) {
+    Logger.warn("Environment never returned ready. Try increasing your delay or tries.")
+    Logger.warn("Continuing action, but expect a failure.")
+  }
+
   Logger.verbose("Update API Keys to allow access to new environment");
   const newEnv = {
     sys: {
@@ -91,7 +96,7 @@ export const runAction = async (space): Promise<void> => {
   // Check for available migrations
   // Migration scripts need to be sorted in order to run without conflicts
   const availableMigrations = toSemver(
-    (await readdirAsync(MIGRATIONS_DIR)).map((file) => filenameToVersion(file)), {clean: false}
+    (await readdirAsync(MIGRATIONS_DIR)).map((file) => filenameToVersion(file)), { clean: false }
   ).reverse();
 
   Logger.verbose(
