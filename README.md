@@ -105,6 +105,7 @@ version_field            | `string`  | No  | `version` | The field-id that carri
 migrations_dir           | `string`  | No  | `migrations` | The directory to look for migrations
 delay                    | `number`  | No  | `3000` | The default delay between attempts for repeatable actions
 max_number_of_tries      | `number`  | No  | `10` | The number of times action will retry a repeatable action
+create_cda_token    | `boolean` | No  | `true` | Create CDA token for current ephemeral environment
 
 
 ## Workflow
@@ -124,6 +125,7 @@ Please look at the [demo file](.github/workflows/main.yml).
     # version_field: versionCounter
     # version_content_type: environmentVersion
     # migrations_dir: contentful/migrations
+    # create_cda_token: false
     space_id: ${{ secrets.SPACE_ID }}
     management_api_key: ${{ secrets.MANAGEMENT_API_KEY }}
   # env:
