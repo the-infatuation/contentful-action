@@ -17,6 +17,7 @@ import {
   VERSION_CONTENT_TYPE,
   VERSION_FIELD,
   FEATURE_PATTERN,
+  WITH_DELIVERY_TOKEN
 } from "./constants";
 import {
   delay,
@@ -214,6 +215,33 @@ export const runAction = async (space): Promise<void> => {
     } catch (error) {
       Logger.error("Cannot delete the environment");
     }
+  }
+
+  if (WITH_DELIVERY_TOKEN) {
+    var branchName = branchNames.headRef
+
+    space.createApiKey({
+      "name": `ephemeral-token-${branchName}`,
+      environments:[
+        {
+        sys: {
+          type: 'Link',
+          linkType: 'Environment',
+          id: environmentId,
+        }
+        }
+      ]
+    }).then(key => {
+      core.setOutput(
+        "cda_token",
+        key.accessToken
+      );
+      Logger.success("CDA token has been created");
+
+    }).catch(err => {
+      Logger.warn("unable to create ephemeral token");
+      Logger.verbose(err)
+    })
   }
 
   // Set the outputs for further actions

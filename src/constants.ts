@@ -15,6 +15,7 @@ export const {
   INPUT_CONTENTFUL_ALIAS,
   INPUT_DELAY,
   INPUT_MAX_NUMBER_OF_TRIES,
+  INPUT_CREATE_DELIVERY_TOKEN,
 } = process.env;
 
 const booleanOr = (str: string, fallback: boolean): boolean => {
@@ -57,3 +58,4 @@ export const MIGRATIONS_DIR = path.join(
 export const CONTENTFUL_ALIAS = INPUT_CONTENTFUL_ALIAS || DEFAULT_CONTENTFUL_ALIAS;
 export const DELAY = Number(INPUT_DELAY || DEFAULT_DELAY);
 export const MAX_NUMBER_OF_TRIES = Number(INPUT_MAX_NUMBER_OF_TRIES || DEFAULT_MAX_NUMBER_OF_TRIES);
+export const WITH_DELIVERY_TOKEN = booleanOr(INPUT_CREATE_DELIVERY_TOKEN, true)
