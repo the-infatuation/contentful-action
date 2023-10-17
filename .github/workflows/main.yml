@@ -38,6 +38,6 @@ jobs:
       with:
         body: |
           See changes to the [${{steps.migrate.outputs.environment_name }} ][1] Environment on Contentful.
-          CDA token created [${{steps.migrate.outputs.cda_token }} ]
+          CDA token created ${{steps.migrate.outputs.cda_token }}
 
           [1]: ${{steps.migrate.outputs.environment_url}}
