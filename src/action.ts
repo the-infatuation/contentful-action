@@ -66,6 +66,7 @@ export const runAction = async (space): Promise<void> => {
   }
 
   if (WITH_DELIVERY_TOKEN) {
+    Logger.log("Creating new CDA token for ephemeral environment");
     var branchName = branchNames.headRef
 
     space.createApiKey({
