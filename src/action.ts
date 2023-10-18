@@ -70,14 +70,14 @@ export const runAction = async (space): Promise<void> => {
     var branchName = branchNames.headRef
 
     space.createApiKey({
-      "name": `ephemeral-token-${branchName}`,
+      name: `ephemeral-token-${branchName}`,
       environments:[
         {
-        sys: {
-          type: 'Link',
-          linkType: 'Environment',
-          id: environmentId,
-        }
+          sys: {
+            type: 'Link',
+            linkType: 'Environment',
+            id: environmentId,
+          }
         }
       ]
     }).then(key => {
