@@ -31,6 +31,12 @@ import {
 
 export const readdirAsync = promisify(readdir);
 
+console.log("--------------")
+console.log("--------------")
+console.log(WITH_DELIVERY_TOKEN)
+console.log("--------------")
+console.log("--------------")
+
 /**
  *
  * @param space
