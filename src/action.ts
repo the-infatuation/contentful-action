@@ -42,12 +42,6 @@ export const runAction = async (space): Promise<void> => {
     branchNames
   );
 
-  Logger.log("START")
-
-  Logger.log("---------");
-  Logger.log(WITH_DELIVERY_TOKEN);
-  Logger.log("---------");
-
   // Counter to limit retries
   let count = 0;
   Logger.log("Waiting for environment processing...");
