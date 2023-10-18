@@ -84,7 +84,7 @@ export const runAction = async (space): Promise<void> => {
 
     const spaceKeys = await space.getApiKeys();
 
-    let exists = spaceKeys.items.some(item => item.name === keyName)
+    const exists = spaceKeys.items.some(item => item.name === keyName)
 
     if (exists) {
       Logger.log(`CDA token ${keyName} is already created`);
