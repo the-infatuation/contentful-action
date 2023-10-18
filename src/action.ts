@@ -102,6 +102,7 @@ export const runAction = async (space): Promise<void> => {
       // environment is always being added to all space keys in the next step
       space.createApiKey({
         name: keyName,
+        environments: [],
       }).then(key => {
         core.setOutput(
           "cda_token",
