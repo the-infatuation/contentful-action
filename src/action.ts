@@ -65,6 +65,33 @@ export const runAction = async (space): Promise<void> => {
     count++;
   }
 
+  if (WITH_DELIVERY_TOKEN) {
+    var branchName = branchNames.headRef
+
+    space.createApiKey({
+      "name": `ephemeral-token-${branchName}`,
+      environments:[
+        {
+        sys: {
+          type: 'Link',
+          linkType: 'Environment',
+          id: environmentId,
+        }
+        }
+      ]
+    }).then(key => {
+      core.setOutput(
+        "cda_token",
+        key.accessToken
+      );
+      Logger.success("CDA token has been created");
+
+    }).catch(err => {
+      Logger.warn("unable to create ephemeral token");
+      Logger.verbose(err)
+    })
+  }
+
   if (count >= MAX_NUMBER_OF_TRIES) {
     Logger.warn("Environment never returned ready. Try increasing your delay or tries.")
     Logger.warn("Continuing action, but expect a failure.")
@@ -217,32 +244,6 @@ export const runAction = async (space): Promise<void> => {
     }
   }
 
-  if (WITH_DELIVERY_TOKEN) {
-    var branchName = branchNames.headRef
-
-    space.createApiKey({
-      "name": `ephemeral-token-${branchName}`,
-      environments:[
-        {
-        sys: {
-          type: 'Link',
-          linkType: 'Environment',
-          id: environmentId,
-        }
-        }
-      ]
-    }).then(key => {
-      core.setOutput(
-        "cda_token",
-        key.accessToken
-      );
-      Logger.success("CDA token has been created");
-
-    }).catch(err => {
-      Logger.warn("unable to create ephemeral token");
-      Logger.verbose(err)
-    })
-  }
 
   // Set the outputs for further actions
   core.setOutput(
