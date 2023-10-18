@@ -17,7 +17,7 @@ import {
   VERSION_CONTENT_TYPE,
   VERSION_FIELD,
   FEATURE_PATTERN,
-  WITH_DELIVERY_TOKEN
+  CREATE_CDA_TOKEN
 } from "./constants";
 import {
   delay,
@@ -65,40 +65,11 @@ export const runAction = async (space): Promise<void> => {
     count++;
   }
 
-  if (WITH_DELIVERY_TOKEN) {
-    Logger.log("Creating new CDA token for ephemeral environment");
-    var branchName = branchNames.headRef
-
-    space.createApiKey({
-      name: `ephemeral-token-${branchName}`,
-      environments:[
-        {
-          sys: {
-            type: 'Link',
-            linkType: 'Environment',
-            id: environmentId,
-          }
-        }
-      ]
-    }).then(key => {
-      core.setOutput(
-        "cda_token",
-        key.accessToken
-      );
-      Logger.success("CDA token has been created");
-
-    }).catch(err => {
-      Logger.warn("unable to create ephemeral token");
-      Logger.verbose(err)
-    })
-  }
-
   if (count >= MAX_NUMBER_OF_TRIES) {
     Logger.warn("Environment never returned ready. Try increasing your delay or tries.")
     Logger.warn("Continuing action, but expect a failure.")
   }
 
-  Logger.verbose("Update API Keys to allow access to new environment");
   const newEnv = {
     sys: {
       type: "Link",
@@ -106,6 +77,45 @@ export const runAction = async (space): Promise<void> => {
       id: environmentId,
     },
   };
+
+  if (CREATE_CDA_TOKEN) {
+    const branchName = branchNames.headRef;
+    const keyName = `ephemeral-token-${branchName}`;
+
+    const spaceKeys = await space.getApiKeys();
+
+    let exists = false;
+
+    for(let i=0; i<spaceKeys.items.length; i++){
+      if (spaceKeys.items[i].name == keyName) {
+        exists = true;
+        break;
+      }
+    }
+
+    if (exists) {
+      Logger.log(`CDA token ${keyName} is already created`);
+    } else {
+      Logger.log(`Creating new CDA token "${keyName}"for ephemeral environment "${environmentId}"...`);
+
+      // just create api key with name
+      // environment is always being added to all space keys in the next step
+      space.createApiKey({
+        name: keyName,
+      }).then(key => {
+        core.setOutput(
+          "cda_token",
+          key.accessToken
+        );
+        Logger.success("CDA token has been created");
+      }).catch(err => {
+        Logger.warn("unable to create ephemeral token");
+        Logger.verbose(err)
+      })
+    }
+  }
+
+  Logger.verbose("Update API Keys to allow access to new environment");
 
   const { items: keys } = await space.getApiKeys();
   await Promise.all(
