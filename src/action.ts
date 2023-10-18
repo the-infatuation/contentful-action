@@ -91,8 +91,6 @@ export const runAction = async (space): Promise<void> => {
     } else {
       Logger.log(`Creating new CDA token "${keyName}" for ephemeral environment "${environmentId}"...`);
 
-      // just create api key with name
-      // environment is always being added to all space keys in the next step
       try {
         const key = await space.createApiKey({
           name: keyName,
