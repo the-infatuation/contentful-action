@@ -86,12 +86,7 @@ export const runAction = async (space): Promise<void> => {
 
     let exists = false;
 
-    for(let i=0; i<spaceKeys.items.length; i++){
-      if (spaceKeys.items[i].name == keyName) {
-        exists = true;
-        break;
-      }
-    }
+    spaceKeys.some(item => item.name === keyName)
 
     if (exists) {
       Logger.log(`CDA token ${keyName} is already created`);
@@ -100,19 +95,21 @@ export const runAction = async (space): Promise<void> => {
 
       // just create api key with name
       // environment is always being added to all space keys in the next step
-      space.createApiKey({
-        name: keyName,
-        environments: [newEnv],
-      }).then(key => {
+      try {
+        const key = await space.createApiKey({
+          name: keyName,
+          environments: [newEnv],
+        })
+      
         core.setOutput(
           "cda_token",
           key.accessToken
         );
         Logger.success("CDA token has been created");
-      }).catch(err => {
+      } catch(err) {
         Logger.warn("unable to create ephemeral token");
         Logger.verbose(err)
-      })
+      }
     }
   }
 
