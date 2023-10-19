@@ -79,20 +79,14 @@ export const runAction = async (space): Promise<void> => {
   };
 
   if (CREATE_CDA_TOKEN) {
+    core.startGroup(`Empemeral CDA token creation`)
+
     const branchName = branchNames.headRef;
     const keyName = `ephemeral-token-${branchName}`;
 
     const spaceKeys = await space.getApiKeys();
 
     const exists = spaceKeys.items.some(item => item.name === keyName)
-
-    core.setSecret("foooooooo")
-    core.setSecret("blah")
-
-    Logger.log(`secret blah`);
-    Logger.log(`secret foooooooo`);
-    Logger.success(`foooooooo`);
-    Logger.log(`blah`);
 
     if (exists) {
       Logger.log(`CDA token ${keyName} is already created`);
@@ -104,6 +98,9 @@ export const runAction = async (space): Promise<void> => {
           name: keyName,
           environments: [newEnv],
         })
+
+        // set token as secret just in case
+        core.setSecret(key.accessToken)
       
         core.setOutput(
           "cda_token",
@@ -115,6 +112,8 @@ export const runAction = async (space): Promise<void> => {
         Logger.verbose(err)
       }
     }
+
+    core.endGroup()
   }
 
   Logger.verbose("Update API Keys to allow access to new environment");
