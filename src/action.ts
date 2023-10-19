@@ -79,7 +79,7 @@ export const runAction = async (space): Promise<void> => {
   };
 
   if (CREATE_CDA_TOKEN) {
-    core.startGroup(`Empemeral CDA token creation`)
+    core.startGroup(`Ephemeral CDA token creation`)
 
     const branchName = branchNames.headRef;
     const keyName = `ephemeral-token-${branchName}`;
