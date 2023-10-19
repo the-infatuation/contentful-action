@@ -25,12 +25,18 @@ inputs:
     description: "The default delay between attempts for repeatable actions"
   max_number_of_tries:
     description: "The number of times action will retry a repeatable action"
+  create_cda_token:
+    description: "CDA token will be created for ephemeral environment"
+    required: false
+    default: true
 
 outputs:
   environment_url:
     description: "Contentful environment URL"
   environment_name:
     description: "Contentful environment name"
+  cda_token:
+    description: "Content Delivery API token created for given ephemeral environment"
 runs:
   using: "node20"
   main: "dist/index.js"

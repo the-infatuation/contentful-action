@@ -15,6 +15,7 @@ export const {
   INPUT_CONTENTFUL_ALIAS,
   INPUT_DELAY,
   INPUT_MAX_NUMBER_OF_TRIES,
+  INPUT_CREATE_CDA_TOKEN,
 } = process.env;
 
 const booleanOr = (str: string, fallback: boolean): boolean => {
@@ -38,6 +39,7 @@ export const DEFAULT_SET_ALIAS = false;
 export const DEFAULT_CONTENTFUL_ALIAS = "master";
 export const DEFAULT_DELAY = 3000;
 export const DEFAULT_MAX_NUMBER_OF_TRIES = 10;
+export const DEFAULT_CREATE_CDA_TOKEN = true;
 
 export const VERSION_CONTENT_TYPE =
   INPUT_VERSION_CONTENT_TYPE || DEFAULT_VERSION_CONTENT_TYPE;
@@ -57,3 +59,4 @@ export const MIGRATIONS_DIR = path.join(
 export const CONTENTFUL_ALIAS = INPUT_CONTENTFUL_ALIAS || DEFAULT_CONTENTFUL_ALIAS;
 export const DELAY = Number(INPUT_DELAY || DEFAULT_DELAY);
 export const MAX_NUMBER_OF_TRIES = Number(INPUT_MAX_NUMBER_OF_TRIES || DEFAULT_MAX_NUMBER_OF_TRIES);
+export const CREATE_CDA_TOKEN = booleanOr(INPUT_CREATE_CDA_TOKEN, DEFAULT_CREATE_CDA_TOKEN)

@@ -17,6 +17,7 @@ import {
   VERSION_CONTENT_TYPE,
   VERSION_FIELD,
   FEATURE_PATTERN,
+  CREATE_CDA_TOKEN
 } from "./constants";
 import {
   delay,
@@ -69,7 +70,6 @@ export const runAction = async (space): Promise<void> => {
     Logger.warn("Continuing action, but expect a failure.")
   }
 
-  Logger.verbose("Update API Keys to allow access to new environment");
   const newEnv = {
     sys: {
       type: "Link",
@@ -77,6 +77,46 @@ export const runAction = async (space): Promise<void> => {
       id: environmentId,
     },
   };
+
+  if (CREATE_CDA_TOKEN) {
+    core.startGroup(`Empemeral CDA token creation`)
+
+    const branchName = branchNames.headRef;
+    const keyName = `ephemeral-token-${branchName}`;
+
+    const spaceKeys = await space.getApiKeys();
+
+    const exists = spaceKeys.items.some(item => item.name === keyName)
+
+    if (exists) {
+      Logger.log(`CDA token ${keyName} is already created`);
+    } else {
+      Logger.log(`Creating new CDA token "${keyName}" for ephemeral environment "${environmentId}"...`);
+
+      try {
+        const key = await space.createApiKey({
+          name: keyName,
+          environments: [newEnv],
+        })
+
+        // set token as secret just in case
+        core.setSecret(key.accessToken)
+      
+        core.setOutput(
+          "cda_token",
+          key.accessToken
+        );
+        Logger.success("CDA token has been created");
+      } catch(err) {
+        Logger.warn("unable to create ephemeral token");
+        Logger.verbose(err)
+      }
+    }
+
+    core.endGroup()
+  }
+
+  Logger.verbose("Update API Keys to allow access to new environment");
 
   const { items: keys } = await space.getApiKeys();
   await Promise.all(
@@ -215,6 +255,7 @@ export const runAction = async (space): Promise<void> => {
       Logger.error("Cannot delete the environment");
     }
   }
+
 
   // Set the outputs for further actions
   core.setOutput(
