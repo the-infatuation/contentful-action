@@ -97,9 +97,6 @@ export const runAction = async (space): Promise<void> => {
           environments: [newEnv],
         })
 
-        Logger.verbose("debug: setting freshly created access token to ouputs");
-        core.setOutput("cda_token", key.accessToken);
-
         Logger.success("CDA token has been created");
       } catch(err) {
         Logger.warn("unable to create ephemeral token");
@@ -116,7 +113,7 @@ export const runAction = async (space): Promise<void> => {
       // put token value on every action run
       // helpful in case the first run failed and the "Write Comment" step was not reached
       if (key.name == tokenKeyName) {
-        Logger.verbose("debug: setting already existing token to ouputs");
+        Logger.verbose("debug: setting ephemeral token value to ouputs");
         core.setOutput("cda_token", key.accessToken);
       }
 

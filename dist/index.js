@@ -42798,8 +42798,6 @@ const runAction = async (space) => {
                     name: tokenKeyName,
                     environments: [newEnv],
                 });
-                Logger.verbose("debug: setting freshly created access token to ouputs");
-                core.setOutput("cda_token", key.accessToken);
                 Logger.success("CDA token has been created");
             }
             catch (err) {
@@ -42814,7 +42812,7 @@ const runAction = async (space) => {
         // put token value on every action run
         // helpful in case the first run failed and the "Write Comment" step was not reached
         if (key.name == tokenKeyName) {
-            Logger.verbose("debug: setting already existing token to ouputs");
+            Logger.verbose("debug: setting ephemeral token value to ouputs");
             core.setOutput("cda_token", key.accessToken);
         }
         Logger.verbose(`Updating key named "${key.name}" with ID:"${key.sys.id}"`);
