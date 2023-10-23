@@ -115,6 +115,7 @@ export const runAction = async (space): Promise<void> => {
       if (key.name == tokenKeyName) {
         Logger.verbose("debug: setting ephemeral token value to ouputs");
         core.setOutput("cda_token", key.accessToken);
+        core.setSecret(key.accessToken) // set token as a secret after you've put it in the output!
       }
 
       Logger.verbose(`Updating key named "${key.name}" with ID:"${key.sys.id}"`);
