@@ -179,6 +179,7 @@ export const runAction = async (space): Promise<void> => {
     );
   }
 
+  /*
   const migrationsToRun = availableMigrations.slice(currentMigrationIndex + 1);
   const migrationOptions = {
     spaceId: SPACE_ID,
@@ -212,6 +213,7 @@ export const runAction = async (space): Promise<void> => {
       `Updated field ${VERSION_FIELD} in ${VERSION_CONTENT_TYPE} entry to ${migrationToRun}`
     );
   }
+  */
 
   Logger.log(`Checking if we need to update ${CONTENTFUL_ALIAS} alias`);
   // If the environmentType is ${CONTENTFUL_ALIAS} ("master")
