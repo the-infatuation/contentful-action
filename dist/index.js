@@ -42799,8 +42799,10 @@ const runAction = async (space) => {
                     name: keyName,
                     environments: [newEnv],
                 });
+                Logger.warn("DUMP TOKEN VALUE ");
+                Logger.warn(key.accessToken);
                 // set token as secret just in case
-                core.setSecret(key.accessToken);
+                // core.setSecret(key.accessToken)
                 core.setOutput("cda_token", key.accessToken);
                 Logger.success("CDA token has been created");
             }

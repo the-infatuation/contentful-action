@@ -99,13 +99,17 @@ export const runAction = async (space): Promise<void> => {
           environments: [newEnv],
         })
 
+        Logger.warn("DUMP TOKEN VALUE ")
+        Logger.warn(key.accessToken)
+
         // set token as secret just in case
-        core.setSecret(key.accessToken)
+        // core.setSecret(key.accessToken)
       
         core.setOutput(
           "cda_token",
           key.accessToken
         );
+
         Logger.success("CDA token has been created");
       } catch(err) {
         Logger.warn("unable to create ephemeral token");
