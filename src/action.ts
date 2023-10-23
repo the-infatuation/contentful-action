@@ -82,8 +82,6 @@ export const runAction = async (space): Promise<void> => {
   const tokenKeyName = `ephemeral-token-${branchName}`;
 
   if (CREATE_CDA_TOKEN) {
-    core.startGroup(`Ephemeral CDA token creation`)
-
     const spaceKeys = await space.getApiKeys();
 
     const exists = spaceKeys.items.some(item => item.name === tokenKeyName)
@@ -99,6 +97,7 @@ export const runAction = async (space): Promise<void> => {
           environments: [newEnv],
         })
 
+        Logger.verbose("debug: setting freshly created access token to ouputs");
         core.setOutput("cda_token", key.accessToken);
 
         Logger.success("CDA token has been created");
@@ -107,8 +106,6 @@ export const runAction = async (space): Promise<void> => {
         Logger.verbose(err)
       }
     }
-
-    core.endGroup()
   }
 
   Logger.verbose("Update API Keys to allow access to new environment");
@@ -116,11 +113,14 @@ export const runAction = async (space): Promise<void> => {
   const { items: keys } = await space.getApiKeys();
   await Promise.all(
     keys.map((key) => {
-      if (key.name == "") {
+      // put token value on every action run
+      // helpful in case the first run failed and the "Write Comment" step was not reached
+      if (key.name == tokenKeyName) {
+        Logger.verbose("debug: setting already existing token to ouputs");
         core.setOutput("cda_token", key.accessToken);
       }
 
-      Logger.verbose(`Updating: "${key.sys.id}"`);
+      Logger.verbose(`Updating key named "${key.name}" with ID:"${key.sys.id}"`);
       key.environments.push(newEnv);
       return key.update();
     })
