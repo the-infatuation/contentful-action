@@ -233,6 +233,20 @@ export const runAction = async (space): Promise<void> => {
     Logger.verbose("No alias changes required");
   }
 
+
+  Logger.log(`-------------------------------------------------`)
+  Logger.log(`DELETE_FEATURE: ` + DELETE_FEATURE);
+  Logger.log(`CREATE_CDA_TOKEN ` + CREATE_CDA_TOKEN);
+  Logger.log(`merged or closed ` + 
+    (
+      github.context.payload.pull_request?.merged ||
+      github.context.payload.pull_request?.closed
+    )
+  );
+  Logger.log("pull_request " + github.context.payload.pull_reques)
+  Logger.log("action " + github.context.payload.pull_reques.action)
+  Logger.log(`-------------------------------------------------`)
+
   if (
     DELETE_FEATURE &&
     CREATE_CDA_TOKEN &&
