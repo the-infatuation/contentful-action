@@ -132,6 +132,7 @@ export const runAction = async (space): Promise<void> => {
     (locale) => locale.default
   ).code;
 
+  /*
   Logger.verbose("Read all the available migrations from the file system");
   // Check for available migrations
   // Migration scripts need to be sorted in order to run without conflicts
@@ -179,7 +180,6 @@ export const runAction = async (space): Promise<void> => {
     );
   }
 
-  /*
   const migrationsToRun = availableMigrations.slice(currentMigrationIndex + 1);
   const migrationOptions = {
     spaceId: SPACE_ID,
