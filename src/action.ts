@@ -129,6 +129,7 @@ export const runAction = async (space): Promise<void> => {
     (locale) => locale.default
   ).code;
 
+  /*
   Logger.verbose("Read all the available migrations from the file system");
   // Check for available migrations
   // Migration scripts need to be sorted in order to run without conflicts
@@ -209,6 +210,7 @@ export const runAction = async (space): Promise<void> => {
       `Updated field ${VERSION_FIELD} in ${VERSION_CONTENT_TYPE} entry to ${migrationToRun}`
     );
   }
+  */
 
   Logger.log(`Checking if we need to update ${CONTENTFUL_ALIAS} alias`);
   // If the environmentType is ${CONTENTFUL_ALIAS} ("master")
