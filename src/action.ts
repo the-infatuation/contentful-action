@@ -231,6 +231,28 @@ export const runAction = async (space): Promise<void> => {
     Logger.verbose("No alias changes required");
   }
 
+  if (
+    DELETE_FEATURE &&
+    CREATE_CDA_TOKEN &&
+    (
+      github.context.payload.pull_request?.merged ||
+      github.context.payload.pull_request?.closed
+    )
+  ) {
+    const { items: keys } = await space.getApiKeys();
+    keys.map((key) => {
+      if (key.name == tokenKeyName) {
+        try {
+          key.delete()
+          Logger.success(`removed ephemeral token ${tokenKeyName}`)
+        } catch(error) {
+          Logger.error("Unable to delete ephemeral token");
+          Logger.error(error);
+        };
+      };
+    })
+  };
+
   // If the sandbox environment should be deleted
   // And the baseRef is the repository default_branch (master|main ...)
   // And the Pull Request has been merged
