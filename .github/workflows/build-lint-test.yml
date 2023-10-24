@@ -33,26 +33,10 @@ jobs:
     - name: build
       run: npm ci && npm run package
 
-  lint:
-    needs:
-    - build
-    runs-on: ubuntu-latest
-
-    steps:
     - name: lint
+      # lint is OS agnostic => only run once
+      if: ${{ matrix.os == 'ubuntu-latest' }}
       run: npm run lint
 
-  test:
-    needs:
-    - build
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-        - macos-latest
-        - ubuntu-latest
-    runs-on: '${{ matrix.os }}'
-
-    steps:
     - name: test
       run: npm run test
