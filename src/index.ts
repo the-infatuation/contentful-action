@@ -3,7 +3,6 @@ import { createClient } from "contentful-management";
 import { runAction } from "./action";
 import { MANAGEMENT_API_KEY, SPACE_ID } from "./constants";
 import { Logger } from "./utils";
-import * as github from "@actions/github";
 
 (async () => {
   const client = createClient({
