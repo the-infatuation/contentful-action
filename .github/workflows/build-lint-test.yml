@@ -1,0 +1,58 @@
+name: Build, Lint & Test
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+  workflow_dispatch:
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+        - macos-latest
+        - ubuntu-latest
+    runs-on: '${{ matrix.os }}'
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '20.8.x'
+
+    - name: build
+      run: npm ci && npm run build
+
+  lint:
+    needs:
+    - build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: lint
+      run: npm run lint
+
+  test:
+    needs:
+    - build
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+        - macos-latest
+        - ubuntu-latest
+    runs-on: '${{ matrix.os }}'
+
+    steps:
+    - name: test
+      run: npm run test
