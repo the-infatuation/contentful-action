@@ -235,17 +235,28 @@ export const runAction = async (space): Promise<void> => {
 
 
   Logger.log(`-------------------------------------------------`)
-  Logger.log(`DELETE_FEATURE: ` + DELETE_FEATURE);
-  Logger.log(`CREATE_CDA_TOKEN ` + CREATE_CDA_TOKEN);
-  Logger.log(`merged or closed ` + 
-    (
-      github.context.payload.pull_request?.merged ||
-      github.context.payload.pull_request?.closed
-    )
-  );
-  Logger.log("pull_request " + github.context.payload.pull_reques)
-  Logger.log("action " + github.context.payload.pull_reques.action)
+
+  Logger.log("payload " + JSON.stringify(github.context.payload))
+
   Logger.log(`-------------------------------------------------`)
+
+  Logger.log("enentName " + github.context.eventName)
+  Logger.log("sha " + github.context.sha)
+  Logger.log("ref " + github.context.ref)
+  Logger.log("workflow " + github.context.workflow)
+  Logger.log("action " + github.context.action)
+  Logger.log("actor " + github.context.actor)
+
+  Logger.log(`-------------------------------------------------`)
+  /*
+  payload: WebhookPayload;
+  eventName: string;
+  sha: string;
+  ref: string;
+  workflow: string;
+  action: string;
+  actor: string;
+  */
 
   if (
     DELETE_FEATURE &&

@@ -42925,14 +42925,24 @@ const runAction = async (space) => {
         Logger.verbose("No alias changes required");
     }
     Logger.log(`-------------------------------------------------`);
-    Logger.log(`DELETE_FEATURE: ` + DELETE_FEATURE);
-    Logger.log(`CREATE_CDA_TOKEN ` + CREATE_CDA_TOKEN);
-    Logger.log(`merged or closed ` +
-        (github.context.payload.pull_request?.merged ||
-            github.context.payload.pull_request?.closed));
-    Logger.log("pull_request " + github.context.payload.pull_reques);
-    Logger.log("action " + github.context.payload.pull_reques.action);
+    Logger.log("payload " + JSON.stringify(github.context.payload));
     Logger.log(`-------------------------------------------------`);
+    Logger.log("enentName " + github.context.eventName);
+    Logger.log("sha " + github.context.sha);
+    Logger.log("ref " + github.context.ref);
+    Logger.log("workflow " + github.context.workflow);
+    Logger.log("action " + github.context.action);
+    Logger.log("actor " + github.context.actor);
+    Logger.log(`-------------------------------------------------`);
+    /*
+    payload: WebhookPayload;
+    eventName: string;
+    sha: string;
+    ref: string;
+    workflow: string;
+    action: string;
+    actor: string;
+    */
     if (DELETE_FEATURE &&
         CREATE_CDA_TOKEN &&
         (github.context.payload.pull_request?.merged ||
@@ -42986,6 +42996,7 @@ const runAction = async (space) => {
 
 
 
+
 (async () => {
     const client = (0,contentful_management_node.createClient)({
         accessToken: MANAGEMENT_API_KEY,
@@ -42998,6 +43009,13 @@ const runAction = async (space) => {
         Logger.error(error);
         core.setFailed(error.message);
     }
+    Logger.log("payload " + github.context.payload);
+    Logger.log("enentName " + github.context.payload.eventName);
+    Logger.log("sha " + github.context.payload.sha);
+    Logger.log("ref " + github.context.payload.ref);
+    Logger.log("workflow " + github.context.payload.workflow);
+    Logger.log("action " + github.context.payload.action);
+    Logger.log("actor " + github.context.payload.actor);
 })();
 
 })();
