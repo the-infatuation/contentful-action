@@ -233,35 +233,15 @@ export const runAction = async (space): Promise<void> => {
     Logger.verbose("No alias changes required");
   }
 
+  // "closed" action happens on PR close and PR merge
+  const githubAction = github.context.payload.action
 
-  Logger.log(`-------------------------------------------------`)
-
-  Logger.log("payload " + JSON.stringify(github.context.payload))
-
-  Logger.log(`-------------------------------------------------`)
-
-  Logger.log("enentName " + github.context.eventName)
-  Logger.log("sha " + github.context.sha)
-  Logger.log("ref " + github.context.ref)
-  Logger.log("workflow " + github.context.workflow)
-  Logger.log("action " + github.context.action)
-  Logger.log("actor " + github.context.actor)
-
-  Logger.log(`-------------------------------------------------`)
-  /*
-  payload: WebhookPayload;
-  eventName: string;
-  sha: string;
-  ref: string;
-  workflow: string;
-  action: string;
-  actor: string;
-  */
-
+  // If CDA token is created and we want to purge ephemeral env upon close/merge
+  // then ephemeral token should be deleted as well
   if ( 
     DELETE_FEATURE && 
     CREATE_CDA_TOKEN && 
-    github.context.payload.action == "closed" // "closed" action happens on PR close and PR merge
+    githubAction == "closed" 
   ) {
     const { items: keys } = await space.getApiKeys();
     keys.map((key) => {
@@ -284,7 +264,7 @@ export const runAction = async (space): Promise<void> => {
   if (
     DELETE_FEATURE &&
     branchNames.baseRef === branchNames.defaultBranch &&
-    github.context.payload.pull_request?.merged
+    githubAction == "closed"
   ) {
     try {
       const environmentIdToDelete = getNameFromPattern(FEATURE_PATTERN, {
