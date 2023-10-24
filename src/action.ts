@@ -112,7 +112,7 @@ export const runAction = async (space): Promise<void> => {
     keys.map((key) => {
       // put token value on every action run
       // helpful in case the first run failed and the "Write Comment" step was not reached
-      if (key.name == tokenKeyName) {
+      if (key.name === tokenKeyName) {
         Logger.verbose("debug: setting ephemeral token value to ouputs");
         core.setOutput("cda_token", key.accessToken);
         core.setSecret(key.accessToken) // set token as a secret after you've put it in the output!
@@ -239,11 +239,11 @@ export const runAction = async (space): Promise<void> => {
   if ( 
     DELETE_FEATURE && 
     CREATE_CDA_TOKEN && 
-    githubAction == "closed" 
+    githubAction === "closed" 
   ) {
     const { items: keys } = await space.getApiKeys();
     keys.map((key) => {
-      if (key.name == tokenKeyName) {
+      if (key.name === tokenKeyName) {
         try {
           key.delete()
           Logger.success(`removed ephemeral token ${tokenKeyName}`)
@@ -262,7 +262,7 @@ export const runAction = async (space): Promise<void> => {
   if (
     DELETE_FEATURE &&
     branchNames.baseRef === branchNames.defaultBranch &&
-    githubAction == "closed"
+    githubAction === "closed"
   ) {
     try {
       const environmentIdToDelete = getNameFromPattern(FEATURE_PATTERN, {
