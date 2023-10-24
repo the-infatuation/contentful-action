@@ -42945,8 +42945,8 @@ const runAction = async (space) => {
     */
     if (DELETE_FEATURE &&
         CREATE_CDA_TOKEN &&
-        (github.context.payload.pull_request?.merged ||
-            github.context.payload.pull_request?.closed)) {
+        github.context.payload.action == "closed" // "closed" action happens on PR close and PR merge
+    ) {
         const { items: keys } = await space.getApiKeys();
         keys.map((key) => {
             if (key.name == tokenKeyName) {
@@ -42996,7 +42996,6 @@ const runAction = async (space) => {
 
 
 
-
 (async () => {
     const client = (0,contentful_management_node.createClient)({
         accessToken: MANAGEMENT_API_KEY,
@@ -43009,13 +43008,6 @@ const runAction = async (space) => {
         Logger.error(error);
         core.setFailed(error.message);
     }
-    Logger.log("payload " + github.context.payload);
-    Logger.log("enentName " + github.context.payload.eventName);
-    Logger.log("sha " + github.context.payload.sha);
-    Logger.log("ref " + github.context.payload.ref);
-    Logger.log("workflow " + github.context.payload.workflow);
-    Logger.log("action " + github.context.payload.action);
-    Logger.log("actor " + github.context.payload.actor);
 })();
 
 })();

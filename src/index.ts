@@ -16,12 +16,4 @@ import * as github from "@actions/github";
     Logger.error(error);
     core.setFailed(error.message);
   }
-
-  Logger.log("payload " + github.context.payload)
-  Logger.log("enentName " + github.context.payload.eventName)
-  Logger.log("sha " + github.context.payload.sha)
-  Logger.log("ref " + github.context.payload.ref)
-  Logger.log("workflow " + github.context.payload.workflow)
-  Logger.log("action " + github.context.payload.action)
-  Logger.log("actor " + github.context.payload.actor)
 })();

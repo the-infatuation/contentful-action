@@ -258,13 +258,10 @@ export const runAction = async (space): Promise<void> => {
   actor: string;
   */
 
-  if (
-    DELETE_FEATURE &&
-    CREATE_CDA_TOKEN &&
-    (
-      github.context.payload.pull_request?.merged ||
-      github.context.payload.pull_request?.closed
-    )
+  if ( 
+    DELETE_FEATURE && 
+    CREATE_CDA_TOKEN && 
+    github.context.payload.action == "closed" // "closed" action happens on PR close and PR merge
   ) {
     const { items: keys } = await space.getApiKeys();
     keys.map((key) => {
