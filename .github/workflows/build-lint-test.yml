@@ -15,13 +15,7 @@ concurrency:
 
 jobs:
   build:
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-        - macos-latest
-        - ubuntu-latest
-    runs-on: '${{ matrix.os }}'
+    runs-on: ubuntu-22.04
 
     steps:
     - uses: actions/checkout@v3
@@ -34,8 +28,6 @@ jobs:
       run: npm ci && npm run package
 
     - name: lint
-      # lint is OS agnostic => only run once
-      if: ${{ matrix.os == 'ubuntu-latest' }}
       run: npm run lint
 
     - name: test
