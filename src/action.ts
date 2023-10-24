@@ -241,18 +241,22 @@ export const runAction = async (space): Promise<void> => {
     CREATE_CDA_TOKEN && 
     githubAction === "closed" 
   ) {
+    Logger.verbose(`debug: attempting to delete ${tokenKeyName}`)
+
     const { items: keys } = await space.getApiKeys();
-    keys.map((key) => {
-      if (key.name === tokenKeyName) {
-        try {
-          key.delete()
-          Logger.success(`removed ephemeral token ${tokenKeyName}`)
-        } catch(error) {
-          Logger.error("Unable to delete ephemeral token");
-          Logger.error(error);
-        };
+    const k = keys.find(key => key.name === tokenKeyName)
+
+    if (k === undefined) {
+        Logger.warn(`could not find ephemeral toke ${tokenKeyName}, possibly it was deleted manually`);
+    } else {
+      try {
+        k.delete();
+        Logger.success(`removed ephemeral token ${tokenKeyName}`);
+      } catch(error) {
+        Logger.error("Unable to delete ephemeral token");
+        Logger.error(error);
       };
-    })
+    };
   };
 
   // If the sandbox environment should be deleted
