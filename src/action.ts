@@ -254,7 +254,7 @@ export const runAction = async (space): Promise<void> => {
         Logger.success(`removed ephemeral token ${tokenKeyName}`);
       } catch(error) {
         Logger.error("Unable to delete ephemeral token");
-        Logger.error(error);
+        Logger.verbose(error);
       };
     };
   };
