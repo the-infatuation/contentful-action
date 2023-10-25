@@ -112,7 +112,7 @@ export const runAction = async (space): Promise<void> => {
     keys.map((key) => {
       // put token value on every action run
       // helpful in case the first run failed and the "Write Comment" step was not reached
-      if (key.name == tokenKeyName) {
+      if (key.name === tokenKeyName) {
         Logger.verbose("debug: setting ephemeral token value to ouputs");
         core.setOutput("cda_token", key.accessToken);
         core.setSecret(key.accessToken) // set token as a secret after you've put it in the output!
@@ -231,6 +231,34 @@ export const runAction = async (space): Promise<void> => {
     Logger.verbose("No alias changes required");
   }
 
+  // "closed" action happens on PR close and PR merge
+  const githubAction = github.context.payload.action
+
+  // If CDA token is created and we want to purge ephemeral env upon close/merge
+  // then ephemeral token should be deleted as well
+  if ( 
+    DELETE_FEATURE && 
+    CREATE_CDA_TOKEN && 
+    githubAction === "closed" 
+  ) {
+    Logger.verbose(`debug: attempting to delete ${tokenKeyName}`)
+
+    const { items: keys } = await space.getApiKeys();
+    const k = keys.find(key => key.name === tokenKeyName)
+
+    if (k === undefined) {
+        Logger.warn(`could not find ephemeral token ${tokenKeyName}, possibly it was deleted manually`);
+    } else {
+      try {
+        await k.delete();
+        Logger.success(`removed ephemeral token ${tokenKeyName}`);
+      } catch(error) {
+        Logger.error("Unable to delete ephemeral token");
+        Logger.verbose(error);
+      };
+    };
+  };
+
   // If the sandbox environment should be deleted
   // And the baseRef is the repository default_branch (master|main ...)
   // And the Pull Request has been merged
@@ -238,7 +266,7 @@ export const runAction = async (space): Promise<void> => {
   if (
     DELETE_FEATURE &&
     branchNames.baseRef === branchNames.defaultBranch &&
-    github.context.payload.pull_request?.merged
+    githubAction === "closed"
   ) {
     try {
       const environmentIdToDelete = getNameFromPattern(FEATURE_PATTERN, {
