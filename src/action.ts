@@ -247,7 +247,7 @@ export const runAction = async (space): Promise<void> => {
     const k = keys.find(key => key.name === tokenKeyName)
 
     if (k === undefined) {
-        Logger.warn(`could not find ephemeral toke ${tokenKeyName}, possibly it was deleted manually`);
+        Logger.warn(`could not find ephemeral token ${tokenKeyName}, possibly it was deleted manually`);
     } else {
       try {
         await k.delete();
