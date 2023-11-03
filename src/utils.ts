@@ -3,6 +3,7 @@ import chalk from "chalk";
 import { Space } from "contentful-management/dist/typings/entities/space";
 import {
   CONTENTFUL_ALIAS,
+  DEFAULT_BRANCH_NAME,
   DELAY,
   FEATURE_PATTERN,
   LOG_LEVEL,
@@ -218,12 +219,14 @@ export const getEnvironment = async (
   Logger.info(
     `MASTER_PATTERN: ${MASTER_PATTERN} | FEATURE_PATTERN: ${FEATURE_PATTERN}`
   );
+
+  const defaultBranch = DEFAULT_BRANCH_NAME || branchNames.defaultBranch;
   Logger.info(`branchNames.baseRef: ${branchNames.baseRef}`);
-  Logger.info(`branchNames.defaultBranch: ${branchNames.defaultBranch}`);
+  Logger.info(`defaultBranch: ${defaultBranch}`);
   Logger.info(`github.context.payload: ${stringifyObject(github.context.payload)}`)
   // github.context.payload.pull_request?.merged... however for testing we're pushing directly to main...
   const environmentType =
-    branchNames.baseRef === branchNames.defaultBranch &&
+    branchNames.baseRef === defaultBranch &&
       github.context.payload.pull_request?.merged
       ? CONTENTFUL_ALIAS
       : "feature";

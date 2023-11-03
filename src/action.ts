@@ -98,7 +98,7 @@ export const runAction = async (space): Promise<void> => {
         })
 
         Logger.success("CDA token has been created");
-      } catch(err) {
+      } catch (err) {
         Logger.warn("unable to create ephemeral token");
         Logger.verbose(err)
       }
@@ -236,10 +236,10 @@ export const runAction = async (space): Promise<void> => {
 
   // If CDA token is created and we want to purge ephemeral env upon close/merge
   // then ephemeral token should be deleted as well
-  if ( 
-    DELETE_FEATURE && 
-    CREATE_CDA_TOKEN && 
-    githubAction === "closed" 
+  if (
+    DELETE_FEATURE &&
+    CREATE_CDA_TOKEN &&
+    githubAction === "closed"
   ) {
     Logger.verbose(`debug: attempting to delete ${tokenKeyName}`)
 
@@ -247,12 +247,12 @@ export const runAction = async (space): Promise<void> => {
     const k = keys.find(key => key.name === tokenKeyName)
 
     if (k === undefined) {
-        Logger.warn(`could not find ephemeral token ${tokenKeyName}, possibly it was deleted manually`);
+      Logger.warn(`could not find ephemeral token ${tokenKeyName}, possibly it was deleted manually`);
     } else {
       try {
         await k.delete();
         Logger.success(`removed ephemeral token ${tokenKeyName}`);
-      } catch(error) {
+      } catch (error) {
         Logger.error("Unable to delete ephemeral token");
         Logger.verbose(error);
       };
@@ -265,7 +265,6 @@ export const runAction = async (space): Promise<void> => {
   // Then delete the sandbox environment
   if (
     DELETE_FEATURE &&
-    branchNames.baseRef === branchNames.defaultBranch &&
     githubAction === "closed"
   ) {
     try {

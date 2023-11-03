@@ -1,4 +1,4 @@
-export declare const GITHUB_WORKSPACE: string, LOG_LEVEL: string, SPACE_ID: string, MANAGEMENT_API_KEY: string, INPUT_MIGRATIONS_DIR: string, INPUT_DELETE_FEATURE: string, INPUT_SET_ALIAS: string, INPUT_FEATURE_PATTERN: string, INPUT_MASTER_PATTERN: string, INPUT_VERSION_CONTENT_TYPE: string, INPUT_VERSION_FIELD: string, INPUT_CONTENTFUL_ALIAS: string, INPUT_DELAY: string, INPUT_MAX_NUMBER_OF_TRIES: string, INPUT_CREATE_CDA_TOKEN: string;
+export declare const GITHUB_WORKSPACE: string, LOG_LEVEL: string, SPACE_ID: string, MANAGEMENT_API_KEY: string, INPUT_MIGRATIONS_DIR: string, INPUT_DELETE_FEATURE: string, INPUT_SET_ALIAS: string, INPUT_FEATURE_PATTERN: string, INPUT_MASTER_PATTERN: string, INPUT_VERSION_CONTENT_TYPE: string, INPUT_VERSION_FIELD: string, INPUT_CONTENTFUL_ALIAS: string, INPUT_DELAY: string, INPUT_MAX_NUMBER_OF_TRIES: string, INPUT_CREATE_CDA_TOKEN: string, INPUT_DEFAULT_BRANCH_NAME: string;
 export declare const DEFAULT_MIGRATIONS_DIR = "migrations";
 export declare const DEFAULT_MASTER_PATTERN = "master-[YYYY]-[MM]-[DD]-[mm][ss]";
 export declare const DEFAULT_FEATURE_PATTERN = "GH-[branch]";
@@ -10,6 +10,7 @@ export declare const DEFAULT_CONTENTFUL_ALIAS = "master";
 export declare const DEFAULT_DELAY = 3000;
 export declare const DEFAULT_MAX_NUMBER_OF_TRIES = 10;
 export declare const DEFAULT_CREATE_CDA_TOKEN = true;
+export declare const DEFAULT_DEFAULT_BRANCH_NAME: any;
 export declare const VERSION_CONTENT_TYPE: string;
 export declare const FEATURE_PATTERN: string;
 export declare const MASTER_PATTERN: string;
@@ -21,3 +22,4 @@ export declare const CONTENTFUL_ALIAS: string;
 export declare const DELAY: number;
 export declare const MAX_NUMBER_OF_TRIES: number;
 export declare const CREATE_CDA_TOKEN: boolean;
+export declare const DEFAULT_BRANCH_NAME: any;
