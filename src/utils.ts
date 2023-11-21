@@ -15,6 +15,7 @@ import {
   EventNames,
   NameFromPatternArgs,
 } from "./types";
+import path from "path";
 
 // Force colors on github
 chalk.level = 3;
@@ -60,7 +61,7 @@ export const delay = (time = DELAY): Promise<void> =>
 export const filenameToVersion = (file: string): string => {
   Logger.success(`filenameToVersion function`)
   Logger.info(`file: ${file}`)
-  return file.replace(/\.js$/, "").replace(/_/g, ".");
+  return path.parse(file).name
 }
 
 /**
@@ -69,10 +70,10 @@ export const filenameToVersion = (file: string): string => {
  * versionToFilename("1") // "1.js"
  * versionToFilename("1.0.1") // "1.0.1.js"
  */
-export const versionToFilename = (version: string): string => {
+export const versionToFilename = (version: string, ext: string): string => {
   Logger.success(`versionToFilename function`)
   Logger.info(`version: ${version}`)
-  return `${version.replace(/\\./g, "_")}.js`;
+  return `${version.replace(/\\./g, "_")}.${ext}`;
 }
 
 /**

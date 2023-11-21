@@ -26,7 +26,6 @@ import {
   getEnvironment,
   getNameFromPattern,
   Logger,
-  versionToFilename,
 } from "./utils";
 
 export const readdirAsync = promisify(readdir);
@@ -130,10 +129,11 @@ export const runAction = async (space): Promise<void> => {
   ).code;
 
   Logger.verbose("Read all the available migrations from the file system");
+  const migrationsFiles = await readdirAsync(MIGRATIONS_DIR)
   // Check for available migrations
   // Migration scripts need to be sorted in order to run without conflicts
   const availableMigrations = toSemver(
-    (await readdirAsync(MIGRATIONS_DIR)).map((file) => filenameToVersion(file)), { clean: false }
+      migrationsFiles.map((file) => filenameToVersion(file)), { clean: false }
   ).reverse();
 
   Logger.verbose(
@@ -191,7 +191,7 @@ export const runAction = async (space): Promise<void> => {
   while ((migrationToRun = migrationsToRun.shift())) {
     const filePath = path.join(
       MIGRATIONS_DIR,
-      versionToFilename(migrationToRun)
+      migrationsFiles.find((file) => filenameToVersion(file) === migrationToRun)
     );
     Logger.verbose(`Running ${filePath}`);
     await runMigration(
@@ -255,9 +255,9 @@ export const runAction = async (space): Promise<void> => {
       } catch (error) {
         Logger.error("Unable to delete ephemeral token");
         Logger.verbose(error);
-      };
-    };
-  };
+      }
+    }
+  }
 
   // If the sandbox environment should be deleted
   // And the baseRef is the repository default_branch (master|main ...)
