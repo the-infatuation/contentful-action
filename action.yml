@@ -29,7 +29,7 @@ inputs:
     description: "CDA token will be created for ephemeral environment"
     required: false
     default: true
-  default_branch_name: 
+  default_branch_name:
     description: "Override the repository default branch name. Ex: `production` to track a separate release branch"
 
 outputs:
@@ -39,9 +39,10 @@ outputs:
     description: "Contentful environment name"
   cda_token:
     description: "Content Delivery API token created for given ephemeral environment"
+
 runs:
-  using: "node20"
-  main: "dist/index.js"
+  using: 'node20'
+  main: 'src/index.ts'
 branding:
   icon: "upload-cloud"
   color: "red"

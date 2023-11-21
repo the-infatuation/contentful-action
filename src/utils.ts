@@ -1,6 +1,6 @@
 import * as github from "@actions/github";
 import chalk from "chalk";
-import { Space } from "contentful-management/dist/typings/entities/space";
+import { Space } from "contentful-management";
 import {
   CONTENTFUL_ALIAS,
   DEFAULT_BRANCH_NAME,
