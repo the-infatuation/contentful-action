@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
-import { runMigration } from "contentful-migration/built/bin/cli";
+import { runMigration } from "contentful-migration";
 import { readdir } from "fs";
 import path from "path";
 import { promisify } from "util";
