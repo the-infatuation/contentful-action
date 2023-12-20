@@ -96,6 +96,7 @@ Name | Type | Required | Default  | Description
 --- | --- | --- | --- | ---
 **space_id**             | `string`  | Yes | `undefined` | The id of the contentful space
 **management_api_key**   | `string`  | Yes | `undefined` | The management-api key for contentful
+actions                  | `string[]`| No  | `createEnvironment, createCDAToken, applyMigration, updateAlias, cleanUpEnvironments` | The actions to run on this workflow. Comma separated string
 delete_feature           | `boolean` | No  | `false` | Deletes sandbox environment if the head branch is merged
 set_alias                | `boolean` | No  | `false` | Aliases master the new master environment
 contentful_alias         | `string`  | No  | `master` | Alias to update
@@ -119,20 +120,26 @@ Please look at the [demo file](.github/workflows/main.yml).
   id: migrate
   uses: contentful-userland/contentful-migration-automation@v1
   with:
-    # delete_feature: true
-    # set_alias: true
+    # actions: `createEnvironment, applyMigration, updateAlias, cleanUpEnvironments`
     # contentful_alias: "staging"
     # master_pattern: "main-[YY]-[MM]-[DD]-[hh]-[mm]"
     # feature_pattern: "sandbox-[branch]"
     # version_field: versionCounter
     # version_content_type: environmentVersion
     # migrations_dir: contentful/migrations
-    # create_cda_token: false
     space_id: ${{ secrets.SPACE_ID }}
     management_api_key: ${{ secrets.MANAGEMENT_API_KEY }}
   # env:
     # LOG_LEVEL: verbose
 ```
+
+### Some actions examples:
+
+All action options in order of execution: `createEnvironment, backupEnvironment, createCDAToken, applyMigration, updateAlias, cleanUpEnvironments`
+
+ephemeral - `createEnvironment, createCDAToken, applyMigration, updateAlias, cleanUpEnvironments`
+
+production (migrate in place) = `backupEnvironment, applyMigration`
 
 ## Contributors 
 Thanks to our community members who have contributed code to this action. A full list of community contributors to the action are listed below, in alphabetical order:

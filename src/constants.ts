@@ -17,6 +17,7 @@ export const {
   INPUT_MAX_NUMBER_OF_TRIES,
   INPUT_CREATE_CDA_TOKEN,
   INPUT_DEFAULT_BRANCH_NAME,
+  INPUT_ACTIONS
 } = process.env;
 
 const booleanOr = (str: string, fallback: boolean): boolean => {
@@ -42,16 +43,27 @@ export const DEFAULT_DELAY = 3000;
 export const DEFAULT_MAX_NUMBER_OF_TRIES = 10;
 export const DEFAULT_CREATE_CDA_TOKEN = true;
 
+export const DELETE_FEATURE = booleanOr(
+  INPUT_DELETE_FEATURE,
+  DEFAULT_DELETE_FEATURE
+);
+export const CREATE_CDA_TOKEN = booleanOr(INPUT_CREATE_CDA_TOKEN, DEFAULT_CREATE_CDA_TOKEN);
+export const SET_ALIAS = booleanOr(INPUT_SET_ALIAS, DEFAULT_SET_ALIAS);
+
+// set default actions to respect legacy input ENV's. This will make the new versikon backwards compatible.
+export const DEFAULT_ACTIONS = [
+  "createEnvironment",
+  CREATE_CDA_TOKEN && "createCDAToken",
+  "applyMigration",
+  SET_ALIAS && "updateAlias",
+  DELETE_FEATURE && "cleanUpEnvironments"
+].filter(x => x);
+
 export const VERSION_CONTENT_TYPE =
   INPUT_VERSION_CONTENT_TYPE || DEFAULT_VERSION_CONTENT_TYPE;
 export const FEATURE_PATTERN = INPUT_FEATURE_PATTERN || DEFAULT_FEATURE_PATTERN;
 export const MASTER_PATTERN = INPUT_MASTER_PATTERN || DEFAULT_MASTER_PATTERN;
 export const VERSION_FIELD = INPUT_VERSION_FIELD || DEFAULT_VERSION_FIELD;
-export const DELETE_FEATURE = booleanOr(
-  INPUT_DELETE_FEATURE,
-  DEFAULT_DELETE_FEATURE
-);
-export const SET_ALIAS = booleanOr(INPUT_SET_ALIAS, DEFAULT_SET_ALIAS);
 export const MIGRATIONS_DIR = path.join(
   GITHUB_WORKSPACE,
   INPUT_MIGRATIONS_DIR || DEFAULT_MIGRATIONS_DIR
@@ -60,5 +72,6 @@ export const MIGRATIONS_DIR = path.join(
 export const CONTENTFUL_ALIAS = INPUT_CONTENTFUL_ALIAS || DEFAULT_CONTENTFUL_ALIAS;
 export const DELAY = Number(INPUT_DELAY || DEFAULT_DELAY);
 export const MAX_NUMBER_OF_TRIES = Number(INPUT_MAX_NUMBER_OF_TRIES || DEFAULT_MAX_NUMBER_OF_TRIES);
-export const CREATE_CDA_TOKEN = booleanOr(INPUT_CREATE_CDA_TOKEN, DEFAULT_CREATE_CDA_TOKEN);
 export const DEFAULT_BRANCH_NAME = INPUT_DEFAULT_BRANCH_NAME || null;
+
+export const ACTIONS = INPUT_ACTIONS?.trim()?.split(/,\s*/) ?? DEFAULT_ACTIONS;

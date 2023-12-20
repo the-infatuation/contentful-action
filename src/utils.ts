@@ -232,8 +232,8 @@ export const getEnvironment = async (
       : "feature";
   Logger.info(`environmentType: ${environmentType}`);
   Logger.info(`CONTENTFUL_ALIAS: ${CONTENTFUL_ALIAS}`);
-  const isEnvTypeAlias = environmentType === CONTENTFUL_ALIAS
-  Logger.info(`isEnvTypeAlias: ${isEnvTypeAlias}`);
+  // const isEnvTypeAlias = environmentType === CONTENTFUL_ALIAS
+  // Logger.info(`isEnvTypeAlias: ${isEnvTypeAlias}`);
   Logger.info(`MASTER_PATTERN: ${MASTER_PATTERN}`);
   Logger.info(`FEATURE_PATTERN: ${FEATURE_PATTERN}`);
   Logger.info(`branchNames.headRef: ${branchNames.headRef}`);
