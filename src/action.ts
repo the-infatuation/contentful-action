@@ -73,7 +73,7 @@ export const runAction = async (space: Space): Promise<void> => {
     await updateAPIKeys({ space, tokenKeyName, environment: backupEnvironment })
   }
 
-  // always
+  // always. this doesn't actually set anything
   defaultLocale = await setLocale({ environment })
 
   if (ACTIONS.includes("applyMigrations")) {
