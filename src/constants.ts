@@ -50,7 +50,7 @@ export const DELETE_FEATURE = booleanOr(
 export const CREATE_CDA_TOKEN = booleanOr(INPUT_CREATE_CDA_TOKEN, DEFAULT_CREATE_CDA_TOKEN);
 export const SET_ALIAS = booleanOr(INPUT_SET_ALIAS, DEFAULT_SET_ALIAS);
 
-// set default actions to respect legacy input ENV's. This will make the new versikon backwards compatible.
+// set default actions to respect legacy input ENV's. This will make the new version backwards compatible.
 export const DEFAULT_ACTIONS = [
   "createEnvironment",
   CREATE_CDA_TOKEN && "createCDAToken",
