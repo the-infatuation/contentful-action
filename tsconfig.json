@@ -10,14 +10,13 @@
 		"isolatedModules": true,
 		"jsx": "preserve",
 		"lib": [
-			"dom",
 			"esnext"
 		],
 		"module": "esnext",
 		"moduleResolution": "node",
 		"noEmit": true,
 		"resolveJsonModule": true,
-		"skipLibCheck": true,
+		"strictNullChecks": true,
 		"sourceMap": true,
 		"strict": false,
 	}
