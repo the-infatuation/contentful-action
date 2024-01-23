@@ -1,7 +1,15 @@
 import * as github from '@actions/github';
 import chalk from 'chalk';
 import { type Space } from 'contentful-management/dist/typings/entities/space';
-import { CONTENTFUL_ALIAS, DEFAULT_BRANCH_NAME, DELAY, FEATURE_PATTERN, GITHUB_REF_NAME, LOG_LEVEL, MASTER_PATTERN } from './constants';
+import {
+  CONTENTFUL_ALIAS,
+  DEFAULT_BRANCH_NAME,
+  DELAY,
+  FEATURE_PATTERN,
+  GITHUB_REF_NAME,
+  LOG_LEVEL,
+  MASTER_PATTERN,
+} from './constants';
 import { type BranchNames, type EnvironmentProps, type NameFromPatternArgs } from './types';
 
 // Force colors on github
@@ -123,12 +131,13 @@ export const matchers = {
   },
 };
 
+const defualtBranchArg = { branchName: null };
 /**
  *
  * @param pattern
  * @param branchName
  */
-export const getNameFromPattern = (pattern: string, { branchName }: NameFromPatternArgs = { branchName: null }): string => {
+export const getNameFromPattern = (pattern: string, { branchName }: NameFromPatternArgs = defualtBranchArg): string => {
   Logger.success('getNameFromPattern function');
   Logger.info(`pattern: ${pattern}`);
   Logger.info(`branchName: ${branchName}`);
@@ -138,14 +147,16 @@ export const getNameFromPattern = (pattern: string, { branchName }: NameFromPatt
     switch (match) {
       case Matcher.branch:
         if (typeof branchName !== 'string') {
-          throw Error("Error: Received no branch name for pattern replacement.")
+          throw new TypeError('Error: Received no branch name for pattern replacement.');
         }
+
         return matchers[Matcher.branch](branchName);
 
       case Matcher.tag:
         if (!GITHUB_REF_NAME) {
-          throw Error("Error: no process env GITHUB_REF_NAME for pattern replacement.")
+          throw new Error('Error: no process env GITHUB_REF_NAME for pattern replacement.');
         }
+
         return matchers[Matcher.tag](GITHUB_REF_NAME);
 
       case Matcher.YYYY:
