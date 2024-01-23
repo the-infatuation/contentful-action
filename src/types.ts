@@ -8,7 +8,7 @@ export type BranchNames = {
 
 export type EnvironmentNames = {
   base: string;
-  head: string | undefined;
+  head: string | null;
 };
 
 export type EnvironmentProps = {
@@ -19,5 +19,5 @@ export type EnvironmentProps = {
 };
 
 export type NameFromPatternArgs = {
-  branchName: string;
+  branchName: string | null;
 };

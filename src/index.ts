@@ -4,6 +4,14 @@ import { runAction } from './action.js'; // action.yml conflict
 import { MANAGEMENT_API_KEY, SPACE_ID } from './constants';
 import { Logger } from './utils';
 
+if (!MANAGEMENT_API_KEY) {
+  throw Error("Requires Contentful Access Token in: process.env.INPUT_MANAGEMENT_API_KEY")
+}
+
+if (!SPACE_ID) {
+  throw Error("Requires Contentful Space ID in: process.env.INPUT_SPACE_ID")
+}
+
 const client = createClient({
   accessToken: MANAGEMENT_API_KEY,
 });

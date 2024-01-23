@@ -22,8 +22,8 @@ export const {
   INPUT_ACTIONS,
 } = process.env;
 
-const booleanOr = (string_: string, fallback: boolean): boolean => {
-  switch (string_) {
+const booleanOr = (string_: string | undefined, fallback: boolean): boolean => {
+  switch (string_?.toLowerCase()) {
     case 'true':
       return true;
 
@@ -64,6 +64,10 @@ export const VERSION_CONTENT_TYPE = INPUT_VERSION_CONTENT_TYPE ?? DEFAULT_VERSIO
 export const FEATURE_PATTERN = INPUT_FEATURE_PATTERN ?? DEFAULT_FEATURE_PATTERN;
 export const MASTER_PATTERN = INPUT_MASTER_PATTERN ?? DEFAULT_MASTER_PATTERN;
 export const VERSION_FIELD = INPUT_VERSION_FIELD ?? DEFAULT_VERSION_FIELD;
+
+if (!GITHUB_WORKSPACE) {
+  throw Error("MUST specify GITHUB_WORKSPACE in process env")
+}
 export const MIGRATIONS_DIR = path.join(GITHUB_WORKSPACE, INPUT_MIGRATIONS_DIR ?? DEFAULT_MIGRATIONS_DIR);
 
 export const CONTENTFUL_ALIAS = INPUT_CONTENTFUL_ALIAS ?? DEFAULT_CONTENTFUL_ALIAS;
