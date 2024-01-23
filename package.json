@@ -5,7 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "lint": "npx xo src/*",
-    "package": "npx tsc && npx ncc build build/src/index.js -o dist",
+    "ts:compile": "npx tsc",
+    "package": "npm run ts:compile && npx ncc build build/src/index.js -o dist",
     "test": "npx xo src/* && jest"
   },
   "keywords": [
@@ -30,8 +31,7 @@
     "chalk": "^4.1.0",
     "contentful-management": "^10.6.2",
     "contentful-migration": "^4.9.1",
-    "to-semver": "^3.0.0",
-    "tslib": "^2.1.0"
+    "to-semver": "^3.0.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.19.1",
