@@ -6,5 +6,5 @@ export default async function ({ environment }: { environment: Environment }) {
 
   const locales = await environment.getLocales();
 
-  return locales.items.find((locale) => locale.default).code;
+  return locales.items.find((locale) => locale.default)?.code ?? 'en-US';
 }

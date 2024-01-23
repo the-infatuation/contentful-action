@@ -13,6 +13,7 @@
 			"esnext"
 		],
 		"module": "esnext",
+		"target": "ES2020",
 		"moduleResolution": "node",
 		"noEmit": true,
 		"resolveJsonModule": true,

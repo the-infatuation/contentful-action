@@ -1,5 +1,5 @@
-import { Space } from "contentful-management/dist/typings/entities/space";
-import { BranchNames, EnvironmentProps, NameFromPatternArgs } from "./types";
+import { type Space } from 'contentful-management/dist/typings/entities/space';
+import { type BranchNames, type EnvironmentProps, type NameFromPatternArgs } from './types';
 export declare const Logger: {
     log(message: any): void;
     success(message: any): void;
@@ -51,8 +51,8 @@ export declare const matchers: {
     YY: (date: Date) => string;
     MM: (date: Date) => string;
     DD: (date: Date) => string;
-    branch: (branchName: string) => string;
-    tag: (tag: string) => string;
+    branch(branchName: string): string;
+    tag(tag: string): string;
 };
 /**
  *
