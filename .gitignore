@@ -67,3 +67,6 @@ typings/
 
 # IDE
 .idea
+
+# TS build output
+build
