@@ -1,6 +1,6 @@
 import * as github from '@actions/github';
 import type { Space } from 'contentful-management';
-import { CREATE_CDA_TOKEN, DELETE_FEATURE, FEATURE_PATTERN } from '../constants';
+import { CREATE_CDA_TOKEN, FEATURE_PATTERN } from '../constants';
 import { Logger, getNameFromPattern } from '../utils';
 import type { BranchNames } from '../types';
 

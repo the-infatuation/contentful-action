@@ -20,7 +20,8 @@ export default async function ({
     Logger.log(`Creating new CDA token "${tokenKeyName}" for ephemeral environment "${environment.sys.id}"...`);
 
     try {
-      const key = await space.createApiKey({
+      // Olex QQ: ... new key never returned / used?
+      await space.createApiKey({
         name: tokenKeyName,
         environments: [
           {

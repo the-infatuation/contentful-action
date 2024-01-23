@@ -1,11 +1,7 @@
 import { type Environment } from 'contentful-management/dist/typings/entities/environment';
 
-export enum EventNames {
-  pullRequest = 'pull_request',
-}
-
 export type BranchNames = {
-  headRef: undefined | string;
+  headRef: null | string;
   baseRef: string;
   defaultBranch: string;
 };
@@ -23,5 +19,5 @@ export type EnvironmentProps = {
 };
 
 export type NameFromPatternArgs = {
-  branchName?: string;
+  branchName: string;
 };

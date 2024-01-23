@@ -1,25 +1,7 @@
-import { readdir } from 'node:fs';
-import path from 'node:path';
-import { promisify } from 'node:util';
 import * as core from '@actions/core';
-import * as github from '@actions/github';
-import toSemver from 'to-semver';
 import type { Environment, Space } from 'contentful-management';
-import {
-  CONTENTFUL_ALIAS,
-  DELETE_FEATURE,
-  SET_ALIAS,
-  MANAGEMENT_API_KEY,
-  MAX_NUMBER_OF_TRIES,
-  MIGRATIONS_DIR,
-  SPACE_ID,
-  VERSION_CONTENT_TYPE,
-  VERSION_FIELD,
-  FEATURE_PATTERN,
-  CREATE_CDA_TOKEN,
-  ACTIONS,
-} from './constants';
-import { delay, filenameToVersion, getBranchNames, getNameFromPattern, Logger, versionToFilename } from './utils';
+import { CONTENTFUL_ALIAS, ACTIONS } from './constants';
+import { getBranchNames, Logger } from './utils';
 import setLocale from './action/setLocale';
 import updateAPIKeys from './action/updateAPIKeys';
 import createCDAToken from './action/createCDAToken';
@@ -40,47 +22,44 @@ export const runAction = async (space: Space): Promise<void> => {
   const branchName = branchNames.headRef;
   const tokenKeyName = `ephemeral-token-${branchName}`;
 
-  let environment: Environment;
-  let backupEnvironment: Environment;
-  let environmentType: string;
-  let defaultLocale: string;
+  let targetEnvironment: Environment | null = null;
+  let newEnvironmentType: string | null = null;
+  let backupEnvironment: Environment | null = null;
 
   if (ACTIONS.includes('createEnvironment')) {
-    ({ environment, environmentType } = await createEnvironment({ space, branchNames }));
+    const { environment, environmentType } = await createEnvironment({ space, branchNames });
+    targetEnvironment = environment;
+    newEnvironmentType = environmentType;
   } else {
-    environment = await space.getEnvironment(CONTENTFUL_ALIAS);
+    targetEnvironment = await space.getEnvironment(CONTENTFUL_ALIAS);
   }
 
   if (ACTIONS.includes('backupEnvironment')) {
     // Creating, but ignoring the returned environment. It's a backup.
-    ({ environment: backupEnvironment } = await createEnvironment({ space, branchNames }));
+    const createdEnv = await createEnvironment({ space, branchNames });
+    backupEnvironment = createdEnv.environment;
   }
 
   if (ACTIONS.includes('createCDAToken')) {
     // Replaces CREATE_CDA_TOKEN env
-    await createCDAToken({ space, tokenKeyName, environment });
+    await createCDAToken({ space, tokenKeyName, environment: targetEnvironment });
+
+    if (ACTIONS.includes('createEnvironment')) {
+      await updateAPIKeys({ space, tokenKeyName, environment: targetEnvironment });
+    }
+    if (backupEnvironment) {
+      await updateAPIKeys({ space, tokenKeyName, environment: backupEnvironment });
+    }
   }
 
-  // Update API Keys only if we created a new environment. Do for both backup and primary
-  if (ACTIONS.includes('createEnvironment')) {
-    await updateAPIKeys({ space, tokenKeyName, environment });
-  }
-
-  if (backupEnvironment) {
-    // Set API keys for backup environment while we're here
-    await updateAPIKeys({ space, tokenKeyName, environment: backupEnvironment });
-  }
-
-  // Always. this doesn't actually set anything
-  defaultLocale = await setLocale({ environment });
+  const defaultLocale = await setLocale({ environment: targetEnvironment });
 
   if (ACTIONS.includes('applyMigrations')) {
-    await applyMigrations({ environment, defaultLocale });
+    await applyMigrations({ environment: targetEnvironment, defaultLocale });
   }
 
-  if (ACTIONS.includes('updateAlias')) {
-    // Reaplces SET_ALIAS env
-    await updateAlias({ environmentType, space, environment });
+  if (ACTIONS.includes('updateAlias') && newEnvironmentType) {
+    await updateAlias({ environmentType: newEnvironmentType, space, environment: targetEnvironment });
   }
 
   if (ACTIONS.includes('cleanUpEnvironments')) {
@@ -91,8 +70,8 @@ export const runAction = async (space: Space): Promise<void> => {
   // Set the outputs for further actions
   core.setOutput(
     'environment_url',
-    `https://app.contentful.com/spaces/${space.sys.id}/environments/${environment.sys.id}`,
+    `https://app.contentful.com/spaces/${space.sys.id}/environments/${targetEnvironment.sys.id}`,
   );
-  core.setOutput('environment_name', environment.sys.id);
+  core.setOutput('environment_name', targetEnvironment.sys.id);
   Logger.success('🚀 All done 🚀');
 };

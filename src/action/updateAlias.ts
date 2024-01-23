@@ -1,5 +1,5 @@
 import type { Environment, Space } from 'contentful-management';
-import { CONTENTFUL_ALIAS, SET_ALIAS } from '../constants';
+import { CONTENTFUL_ALIAS } from '../constants';
 import { Logger } from '../utils';
 
 export default async function ({

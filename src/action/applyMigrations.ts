@@ -13,8 +13,10 @@ export default async function ({ environment, defaultLocale }: { environment: En
   Logger.verbose('Read all the available migrations from the file system');
   // Check for available migrations
   // Migration scripts need to be sorted in order to run without conflicts
+  const migrationScripts = await readdirAsync(MIGRATIONS_DIR);
+
   const availableMigrations = toSemver(
-    (await readdirAsync(MIGRATIONS_DIR)).map((file) => filenameToVersion(file)),
+    migrationScripts.map((file) => filenameToVersion(file)),
     { clean: false },
   ).reverse();
 
@@ -58,7 +60,8 @@ export default async function ({ environment, defaultLocale }: { environment: En
   Logger.verbose('Run migrations and update version entry');
   // Allow mutations
   let migrationToRun;
-  let mutableStoredVersionEntry = storedVersionEntry;
+
+  /* eslint-disable no-await-in-loop */
   while ((migrationToRun = migrationsToRun.shift())) {
     const filePath = path.join(MIGRATIONS_DIR, versionToFilename(migrationToRun));
     Logger.verbose(`Running ${filePath}`);
@@ -69,10 +72,11 @@ export default async function ({ environment, defaultLocale }: { environment: En
     );
     Logger.success(`Migration script ${migrationToRun}.js succeeded`);
 
-    mutableStoredVersionEntry.fields.version[defaultLocale] = migrationToRun;
-    mutableStoredVersionEntry = await mutableStoredVersionEntry.update();
-    mutableStoredVersionEntry = await mutableStoredVersionEntry.publish();
+    storedVersionEntry.fields.version[defaultLocale] = migrationToRun;
+    const updatedVersionEntry = await storedVersionEntry.update();
+    await updatedVersionEntry.publish();
 
     Logger.success(`Updated field ${VERSION_FIELD} in ${VERSION_CONTENT_TYPE} entry to ${migrationToRun}`);
   }
+  /* eslint-enable no-await-in-loop */
 }

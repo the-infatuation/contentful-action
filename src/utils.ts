@@ -2,13 +2,14 @@ import * as github from '@actions/github';
 import chalk from 'chalk';
 import { type Space } from 'contentful-management/dist/typings/entities/space';
 import { CONTENTFUL_ALIAS, DEFAULT_BRANCH_NAME, DELAY, FEATURE_PATTERN, LOG_LEVEL, MASTER_PATTERN } from './constants';
-import { type BranchNames, type EnvironmentProps, EventNames, type NameFromPatternArgs } from './types';
+import { type BranchNames, type EnvironmentProps, type NameFromPatternArgs } from './types';
 
 // Force colors on github
 chalk.level = 3;
 
 const stringifyObject = (object) => JSON.stringify(object, null, 2);
 
+/* eslint-disable no-console */
 export const Logger = {
   log(message) {
     console.log(chalk.white(message));
@@ -31,12 +32,17 @@ export const Logger = {
     }
   },
 };
+/* eslint-enable no-console */
 
 /**
  * Promise based delay
  * @param time
  */
-export const delay = async (time = DELAY): Promise<void> => new Promise((resolve) => setTimeout(resolve, time));
+export const delay = async (time = DELAY): Promise<void> => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, time);
+  });
+};
 
 /**
  * Convert fileNames to versions
@@ -76,7 +82,7 @@ export const branchNameToEnvironmentName = (branchName: string): string => {
 
     return newBranchName;
   } catch (error) {
-    console.trace('branchNameToEnvironmentName error', error);
+    Logger.error('branchNameToEnvironmentName error:');
     throw new Error(error);
   }
 };
@@ -134,7 +140,7 @@ export const getNameFromPattern = (pattern: string, { branchName }: NameFromPatt
         return matchers[Matcher.branch](branchName);
 
       case Matcher.tag:
-        return matchers[Matcher.tag](process.env.GITHUB_REF_NAME);
+        return matchers[Matcher.tag](GITHUB_REF_NAME);
 
       case Matcher.YYYY:
       case Matcher.YY:
@@ -156,18 +162,18 @@ export const getNameFromPattern = (pattern: string, { branchName }: NameFromPatt
  */
 export const getBranchNames = (): BranchNames => {
   const { eventName, payload } = github.context;
-  const { default_branch: defaultBranch } = payload.repository;
+  const defaultBranch = payload.repository?.default_branch ?? 'main';
 
   // Check the eventName
   Logger.success('getBranchNames function');
   Logger.info(`eventName: ${eventName}`);
   Logger.info(`payload: ${stringifyObject(payload)}`);
+
   switch (eventName) {
-    // If pullRequest we need to get the head and base
-    case EventNames.pullRequest:
+    case 'pull_request':
       return {
-        baseRef: payload.pull_request.base.ref,
-        headRef: payload.pull_request.head.ref,
+        baseRef: payload.pull_request?.base.ref as string,
+        headRef: payload.pull_request?.head.ref as string,
         defaultBranch,
       };
 
@@ -175,7 +181,7 @@ export const getBranchNames = (): BranchNames => {
     default:
       return {
         headRef: null,
-        baseRef: payload.ref.replace(/^refs\/heads\//, ''),
+        baseRef: (payload.ref as string)?.replace(/^refs\/heads\//, ''),
         defaultBranch,
       };
   }
@@ -200,7 +206,8 @@ export const getEnvironment = async (space: Space, branchNames: BranchNames): Pr
   // Else create an environment name for the given feature_pattern
   Logger.info(`MASTER_PATTERN: ${MASTER_PATTERN} | FEATURE_PATTERN: ${FEATURE_PATTERN}`);
 
-  const defaultBranch = DEFAULT_BRANCH_NAME || branchNames.defaultBranch;
+  const defaultBranch = DEFAULT_BRANCH_NAME ?? branchNames.defaultBranch;
+
   Logger.info(`branchNames.baseRef: ${branchNames.baseRef}`);
   Logger.info(`defaultBranch: ${defaultBranch}`);
   Logger.info(`github.context.payload: ${stringifyObject(github.context.payload)}`);
