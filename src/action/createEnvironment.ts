@@ -1,44 +1,43 @@
-import type { Environment, Space } from "contentful-management";
-import { Logger, delay, getEnvironment } from "../utils";
-import type { BranchNames } from "../types";
-import { MAX_NUMBER_OF_TRIES } from "../constants";
+import type { Space } from 'contentful-management';
+import { Logger, delay, getEnvironment } from '../utils';
+import type { BranchNames } from '../types';
+import { MAX_NUMBER_OF_TRIES } from '../constants';
 
-export default async function ({ space, branchNames }: { space: Space, branchNames: BranchNames }) {
-    const { environmentId, environment, environmentType } = await getEnvironment(
-        space,
-        branchNames
-    );
+export default async function ({ space, branchNames }: { space: Space; branchNames: BranchNames }) {
+  const { environmentId, environment, environmentType } = await getEnvironment(space, branchNames);
 
-    // Counter to limit retries
-    let count = 0;
-    Logger.log("Waiting for environment processing...");
-    while (count < MAX_NUMBER_OF_TRIES) {
-        const status = (await space.getEnvironment(environment.sys.id)).sys.status
-            .sys.id;
+  // Counter to limit retries
+  let count = 0;
 
-        if (status === "ready") {
-            Logger.success(
-                `Successfully processed new environment: "${environmentId}"`
-            );
-            break;
-        }
+  Logger.log('Waiting for environment processing...');
 
-        if (status === "failed") {
-            Logger.warn("Environment creation failed");
-            break;
-        }
+  /* eslint-disable no-await-in-loop */
+  while (count < MAX_NUMBER_OF_TRIES) {
+    const fetchedEnv = await space.getEnvironment(environment.sys.id);
+    const status = fetchedEnv.sys.status.sys.id;
 
-        await delay();
-        count++;
+    if (status === 'ready') {
+      Logger.success(`Successfully processed new environment: "${environmentId}"`);
+      break;
     }
 
-    if (count >= MAX_NUMBER_OF_TRIES) {
-        Logger.warn("Environment never returned ready. Try increasing your delay or tries.")
-        Logger.warn("Continuing action, but expect a failure.")
+    if (status === 'failed') {
+      Logger.warn('Environment creation failed');
+      break;
     }
 
-    return {
-        environment,
-        environmentType
-    };
+    await delay();
+    count++;
+  }
+  /* eslint-enable no-await-in-loop */
+
+  if (count >= MAX_NUMBER_OF_TRIES) {
+    Logger.warn('Environment never returned ready. Try increasing your delay or tries.');
+    Logger.warn('Continuing action, but expect a failure.');
+  }
+
+  return {
+    environment,
+    environmentType,
+  };
 }

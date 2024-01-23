@@ -1,10 +1,10 @@
-import type { Environment } from "contentful-management";
-import { Logger } from "../utils";
+import type { Environment } from 'contentful-management';
+import { Logger } from '../utils';
 
 export default async function ({ environment }: { environment: Environment }) {
+  Logger.verbose('Set default locale to new environment');
 
-    Logger.verbose("Set default locale to new environment");
-    return (await environment.getLocales()).items.find(
-        (locale) => locale.default
-    ).code;
+  const locales = await environment.getLocales();
+
+  return locales.items.find((locale) => locale.default).code;
 }
