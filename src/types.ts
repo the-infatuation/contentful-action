@@ -1,27 +1,23 @@
-import { Environment } from "contentful-management/dist/typings/entities/environment";
+import { type Environment } from 'contentful-management/dist/typings/entities/environment';
 
-export enum EventNames {
-  pullRequest = "pull_request",
-}
-
-export interface BranchNames {
+export type BranchNames = {
   headRef: null | string;
   baseRef: string;
   defaultBranch: string;
-}
+};
 
-export interface EnvironmentNames {
+export type EnvironmentNames = {
   base: string;
   head: string | null;
-}
+};
 
-export interface EnvironmentProps {
+export type EnvironmentProps = {
   environmentType: string;
   environmentNames: EnvironmentNames;
   environmentId: string;
   environment: Environment;
-}
+};
 
-export interface NameFromPatternArgs {
-  branchName?: string;
-}
+export type NameFromPatternArgs = {
+  branchName: string | null;
+};
