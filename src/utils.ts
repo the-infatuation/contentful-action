@@ -9,6 +9,7 @@ import {
   GITHUB_REF_NAME,
   LOG_LEVEL,
   MASTER_PATTERN,
+  SOURCE_ENVIRONMENT_ID,
 } from './constants';
 import { type BranchNames, type EnvironmentProps, type NameFromPatternArgs } from './types';
 
@@ -242,8 +243,8 @@ export const getEnvironment = async (space: Space, branchNames: BranchNames): Pr
     environmentType === CONTENTFUL_ALIAS
       ? getNameFromPattern(MASTER_PATTERN)
       : getNameFromPattern(FEATURE_PATTERN, {
-          branchName: branchNames.headRef,
-        });
+        branchName: branchNames.headRef,
+      });
   Logger.info(`environmentId: "${environmentId}"`);
 
   // If environment matches ${CONTENTFUL_ALIAS} ("master")
@@ -255,7 +256,7 @@ export const getEnvironment = async (space: Space, branchNames: BranchNames): Pr
       environmentId,
       environment: await space.createEnvironmentWithId(environmentId, {
         name: environmentId,
-      }),
+      }, SOURCE_ENVIRONMENT_ID),
     };
   }
 

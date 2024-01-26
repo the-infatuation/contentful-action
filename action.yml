@@ -33,6 +33,10 @@ inputs:
     default: true
   default_branch_name: 
     description: "Override the repository default branch name. Ex: `production` to track a separate release branch"
+  source_environment_id:
+    description: "Override the source environment that we are cloning from."
+    default: "master"
+    required: false
 
 outputs:
   environment_url:
