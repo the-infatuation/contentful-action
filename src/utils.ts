@@ -243,8 +243,8 @@ export const getEnvironment = async (space: Space, branchNames: BranchNames): Pr
     environmentType === CONTENTFUL_ALIAS
       ? getNameFromPattern(MASTER_PATTERN)
       : getNameFromPattern(FEATURE_PATTERN, {
-        branchName: branchNames.headRef,
-      });
+          branchName: branchNames.headRef,
+        });
   Logger.info(`environmentId: "${environmentId}"`);
 
   // If environment matches ${CONTENTFUL_ALIAS} ("master")
@@ -254,9 +254,13 @@ export const getEnvironment = async (space: Space, branchNames: BranchNames): Pr
       environmentType,
       environmentNames,
       environmentId,
-      environment: await space.createEnvironmentWithId(environmentId, {
-        name: environmentId,
-      }, SOURCE_ENVIRONMENT_ID),
+      environment: await space.createEnvironmentWithId(
+        environmentId,
+        {
+          name: environmentId,
+        },
+        SOURCE_ENVIRONMENT_ID,
+      ),
     };
   }
 
