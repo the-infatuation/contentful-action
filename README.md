@@ -96,7 +96,7 @@ Name | Type | Required | Default  | Description
 --- | --- | --- | --- | ---
 **space_id**             | `string`  | Yes | `undefined` | The id of the contentful space
 **management_api_key**   | `string`  | Yes | `undefined` | The management-api key for contentful
-actions                  | `string[]`| No  | `createEnvironment, createCDAToken, applyMigrations, updateAlias, cleanUpEnvironments` | The actions to run on this workflow. Comma separated string. One of `createEnvironment, backupEnvironemnt, createCDAToken, applyMigrations, updateAlias, cleanUpEnvironments`
+actions                  | `string[]`| No  | `createEnvironment, createCDAToken, applyMigrations, updateAlias, cleanUpEnvironments` | The actions to run on this workflow. Comma separated string. One of `createEnvironment, backupEnvironment, createCDAToken, applyMigrations, updateAlias, cleanUpEnvironments`
 delete_feature           | `boolean` | No  | `false` | Deletes sandbox environment if the head branch is merged
 set_alias                | `boolean` | No  | `false` | Aliases master the new master environment
 contentful_alias         | `string`  | No  | `master` | Alias to update
@@ -140,7 +140,7 @@ All action options in order of execution: `createEnvironment, backupEnvironment,
 
 ephemeral - `createEnvironment, createCDAToken, applyMigration, updateAlias, cleanUpEnvironments`
 
-production (migrate in place) = `backupEnvironment, applyMigration`
+production (migrate in place) = `backupEnvironment, createCDAToken, applyMigrations, cleanUpEnvironments`
 
 ## Contributors 
 Thanks to our community members who have contributed code to this action. A full list of community contributors to the action are listed below, in alphabetical order:
