@@ -20,6 +20,7 @@ export const {
   INPUT_CREATE_CDA_TOKEN,
   INPUT_DEFAULT_BRANCH_NAME,
   INPUT_ACTIONS,
+  INPUT_SOURCE_ENVIRONMENT_ID,
 } = process.env;
 
 const booleanOr = (string_: string | undefined, fallback: boolean): boolean => {
@@ -46,6 +47,7 @@ export const DEFAULT_CONTENTFUL_ALIAS = 'master';
 export const DEFAULT_DELAY = 3000;
 export const DEFAULT_MAX_NUMBER_OF_TRIES = 10;
 export const DEFAULT_CREATE_CDA_TOKEN = true;
+export const DEFAULT_SOURCE_ENVIRONMENT_ID = DEFAULT_CONTENTFUL_ALIAS;
 
 export const DELETE_FEATURE = booleanOr(INPUT_DELETE_FEATURE, DEFAULT_DELETE_FEATURE);
 export const CREATE_CDA_TOKEN = booleanOr(INPUT_CREATE_CDA_TOKEN, DEFAULT_CREATE_CDA_TOKEN);
@@ -76,3 +78,5 @@ export const MAX_NUMBER_OF_TRIES = Number(INPUT_MAX_NUMBER_OF_TRIES ?? DEFAULT_M
 export const DEFAULT_BRANCH_NAME = INPUT_DEFAULT_BRANCH_NAME ?? null;
 
 export const ACTIONS = INPUT_ACTIONS?.trim()?.split(/,\s*/) ?? DEFAULT_ACTIONS;
+
+export const SOURCE_ENVIRONMENT_ID = INPUT_SOURCE_ENVIRONMENT_ID ?? DEFAULT_SOURCE_ENVIRONMENT_ID;

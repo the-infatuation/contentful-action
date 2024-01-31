@@ -9,6 +9,7 @@ import {
   GITHUB_REF_NAME,
   LOG_LEVEL,
   MASTER_PATTERN,
+  SOURCE_ENVIRONMENT_ID,
 } from './constants';
 import { type BranchNames, type EnvironmentProps, type NameFromPatternArgs } from './types';
 
@@ -253,9 +254,13 @@ export const getEnvironment = async (space: Space, branchNames: BranchNames): Pr
       environmentType,
       environmentNames,
       environmentId,
-      environment: await space.createEnvironmentWithId(environmentId, {
-        name: environmentId,
-      }),
+      environment: await space.createEnvironmentWithId(
+        environmentId,
+        {
+          name: environmentId,
+        },
+        SOURCE_ENVIRONMENT_ID,
+      ),
     };
   }
 

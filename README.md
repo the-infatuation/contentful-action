@@ -96,7 +96,7 @@ Name | Type | Required | Default  | Description
 --- | --- | --- | --- | ---
 **space_id**             | `string`  | Yes | `undefined` | The id of the contentful space
 **management_api_key**   | `string`  | Yes | `undefined` | The management-api key for contentful
-actions                  | `string[]`| No  | `createEnvironment, createCDAToken, applyMigration, updateAlias, cleanUpEnvironments` | The actions to run on this workflow. Comma separated string
+actions                  | `string[]`| No  | `createEnvironment, createCDAToken, applyMigrations, updateAlias, cleanUpEnvironments` | The actions to run on this workflow. Comma separated string. One of `createEnvironment, backupEnvironment, createCDAToken, applyMigrations, updateAlias, cleanUpEnvironments`
 delete_feature           | `boolean` | No  | `false` | Deletes sandbox environment if the head branch is merged
 set_alias                | `boolean` | No  | `false` | Aliases master the new master environment
 contentful_alias         | `string`  | No  | `master` | Alias to update
@@ -109,6 +109,7 @@ delay                    | `number`  | No  | `3000` | The default delay between 
 max_number_of_tries      | `number`  | No  | `10` | The number of times action will retry a repeatable action
 create_cda_token         | `boolean` | No  | `true` | Create CDA token for current ephemeral environment
 default_branch_name      | `string`  | No  | `null` | Override the repository default branch name. Ex: `production` to track a separate release branch
+source_environment_id    | `string`  | No  | `master` | Override the environment that we are cloning from
 
 
 ## Workflow
@@ -139,7 +140,7 @@ All action options in order of execution: `createEnvironment, backupEnvironment,
 
 ephemeral - `createEnvironment, createCDAToken, applyMigration, updateAlias, cleanUpEnvironments`
 
-production (migrate in place) = `backupEnvironment, applyMigration`
+production (migrate in place) = `backupEnvironment, createCDAToken, applyMigrations, cleanUpEnvironments`
 
 ## Contributors 
 Thanks to our community members who have contributed code to this action. A full list of community contributors to the action are listed below, in alphabetical order:
