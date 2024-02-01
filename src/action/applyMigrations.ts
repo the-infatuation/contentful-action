@@ -60,6 +60,7 @@ export default async function ({ environment, defaultLocale }: { environment: En
   Logger.verbose('Run migrations and update version entry');
   // Allow mutations
   let migrationToRun;
+  let lastMigration;
 
   /* eslint-disable no-await-in-loop */
   while ((migrationToRun = migrationsToRun.shift())) {
@@ -70,10 +71,11 @@ export default async function ({ environment, defaultLocale }: { environment: En
         filePath,
       }),
     );
+    lastMigration = migrationToRun;
     Logger.success(`Migration script ${migrationToRun}.js succeeded`);
   }
 
-  storedVersionEntry.fields.version[defaultLocale] = migrationToRun;
+  storedVersionEntry.fields.version[defaultLocale] = lastMigration;
   const updatedVersionEntry = await storedVersionEntry.update();
   await updatedVersionEntry.publish();
 
