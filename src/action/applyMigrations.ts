@@ -75,9 +75,11 @@ export default async function ({ environment, defaultLocale }: { environment: En
     Logger.success(`Migration script ${migrationToRun}.js succeeded`);
   }
 
-  storedVersionEntry.fields.version[defaultLocale] = lastMigration;
-  const updatedVersionEntry = await storedVersionEntry.update();
-  await updatedVersionEntry.publish();
+  if (lastMigration) {
+    storedVersionEntry.fields.version[defaultLocale] = lastMigration;
+    const updatedVersionEntry = await storedVersionEntry.update();
+    await updatedVersionEntry.publish();
+  }
 
   Logger.success(`Updated field ${VERSION_FIELD} in ${VERSION_CONTENT_TYPE} entry to ${migrationToRun}`);
   /* eslint-enable no-await-in-loop */
