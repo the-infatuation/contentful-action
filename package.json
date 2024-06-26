@@ -4,10 +4,12 @@
   "description": "JavaScript Action for Contentful migrations",
   "main": "src/index.ts",
   "scripts": {
+    "format": "npx prettier --write \"**/*.{js,tsx,scss,ts}\"",
+    "format:check": "npx prettier --check \"**/*.{js,tsx,scss,ts}\"",
     "lint": "npx xo src/*",
     "lint:fix": "npx xo src/* --fix",
-    "ts:compile": "npx tsc",
     "package": "npm run ts:compile && npx ncc build build/index.js -o dist",
+    "ts:compile": "npx tsc",
     "test": "npx xo src/* && jest"
   },
   "keywords": [
