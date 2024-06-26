@@ -1,0 +1,46 @@
+name: Reusable Javascript Lint
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        default: '20'
+        description: 'Node version.'
+        type: string
+      working-directory:
+        description: 'Source code directory.'
+        default: '.'
+        type: string
+
+jobs:
+  verify:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Install
+        run: |
+          npm ci -- --cache .npm
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Build
+        run: |
+          npm ci --legacy-peer-deps && npm run package
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Lint
+        run: |
+          npm run lint
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Check Format
+        run: |
+          npm run format:check
+        working-directory: ${{ inputs.working-directory }}

@@ -1,0 +1,21 @@
+name: Pull Request
+
+on:
+  pull_request:
+    paths-ignore:
+    - .dockerignore
+    - '.github/**'
+    - .gitignore
+    - '**/*.md'
+  workflow_dispatch:
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  codeql:
+    uses: ./.github/workflows/call-javascript-codeql.yml
+
+  lint:
+    uses: ./.github/workflows/call-javascript-lint.yml
