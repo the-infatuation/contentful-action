@@ -30,11 +30,6 @@ jobs:
           npm ci -- --cache .npm
         working-directory: ${{ inputs.working-directory }}
 
-      - name: Build
-        run: |
-          npm ci --legacy-peer-deps && npm run package
-        working-directory: ${{ inputs.working-directory }}
-
       - name: Lint
         run: |
           npm run lint
