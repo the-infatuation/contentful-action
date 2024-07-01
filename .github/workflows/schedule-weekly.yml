@@ -1,0 +1,20 @@
+name: Schedule Weekly
+
+on:
+  schedule:
+    # every Monday at 10:00 UTC (5 AM EST / 6 AM EDT)
+    #
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    # https://en.wikipedia.org/wiki/Eastern_Time_Zone
+    - cron: '0 10 * * 1'
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  codeql:
+    uses: ./.github/workflows/call-javascript-codeql.yml
+
+  lint:
+    uses: ./.github/workflows/call-javascript-lint.yml
