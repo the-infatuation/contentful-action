@@ -23,23 +23,23 @@ const sanitizeMsg = (message: string): string => message.replace(/\n|\r/g, '');
 /* eslint-disable no-console */
 export const Logger = {
   log(message) {
-    console.log(chalk.white(sanitizeMsg(message));
-  },
-  success(message) {
-    console.log('✅', chalk.green(sanitizeMsg(message)));
-  },
-  error(message) {
-    console.log('💩', chalk.red(sanitizeMsg(message)));
-  },
-  warn(message) {
-    console.log('⚠️', chalk.yellow(sanitizeMsg(message)));
+    console.log(sanitizeMsg(message));
   },
   info(message) {
-    console.log('ℹ️', chalk.blue(sanitizeMsg(message)));
+    console.info(sanitizeMsg(message));
+  },
+  success(message) {
+    console.info(sanitizeMsg(message));
+  },
+  warn(message) {
+    console.warn(sanitizeMsg(message));
+  },
+  error(message) {
+    console.error(sanitizeMsg(message));
   },
   verbose(message) {
     if (LOG_LEVEL === 'verbose') {
-      console.log(chalk.white(sanitizeMsg(message)));
+      console.debug(sanitizeMsg(message));
     }
   },
 };
