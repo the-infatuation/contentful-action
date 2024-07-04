@@ -18,26 +18,28 @@ chalk.level = 3;
 
 const stringifyObject = (object) => JSON.stringify(object, null, 2);
 
+const sanitizeMsg = (message: string): string => message.replace(/\n|\r/g, '');
+
 /* eslint-disable no-console */
 export const Logger = {
-  log(message: string) {
-    console.log(chalk.white(message.replace(/\n|\r/g, '')));
+  log(message) {
+    console.log(chalk.white(sanitizeMsg(message));
   },
-  success(message: string) {
-    console.log('✅', chalk.green(message.replace(/\n|\r/g, '')));
+  success(message) {
+    console.log('✅', chalk.green(sanitizeMsg(message)));
   },
-  error(message: string) {
-    console.log('💩', chalk.red(message.replace(/\n|\r/g, '')));
+  error(message) {
+    console.log('💩', chalk.red(sanitizeMsg(message)));
   },
-  warn(message: string) {
-    console.log('⚠️', chalk.yellow(message.replace(/\n|\r/g, '')));
+  warn(message) {
+    console.log('⚠️', chalk.yellow(sanitizeMsg(message)));
   },
-  info(message: string) {
-    console.log('ℹ️', chalk.blue(message.replace(/\n|\r/g, '')));
+  info(message) {
+    console.log('ℹ️', chalk.blue(sanitizeMsg(message)));
   },
-  verbose(message: string) {
+  verbose(message) {
     if (LOG_LEVEL === 'verbose') {
-      console.log(chalk.white(message.replace(/\n|\r/g, '')));
+      console.log(chalk.white(sanitizeMsg(message)));
     }
   },
 };
