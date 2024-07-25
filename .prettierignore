@@ -1,0 +1,7 @@
+.github/
+
+dist
+coverage
+package-lock.json
+
+*.md
