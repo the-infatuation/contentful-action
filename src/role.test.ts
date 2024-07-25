@@ -100,7 +100,7 @@ describe('createAllowPolicyForEnvironment', () => {
       constraint: {
         and: [{ equals: [{ doc: 'sys.type' }, 'Environment'] }, { equals: [{ doc: 'sys.id' }, environmentId] }],
       },
-      actions: 'all',
+      actions: ['access'],
     };
 
     const result = createAllowPolicyForEnvironment(environmentId);

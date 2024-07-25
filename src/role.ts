@@ -46,8 +46,9 @@ export function createAllowPolicyForEnvironment(environmentId: string): {
     constraint: {
       and: [{ equals: [{ doc: 'sys.type' }, 'Environment'] }, { equals: [{ doc: 'sys.id' }, environmentId] }],
     },
-    // 'access' is valid, and it's the value that is assigned when an Env is added via UI.
-    // @ts-expect-error
+    // We want to keep the same behavior on the role and be able to manage it via the UI, so 'access' is a valid value
+    // and is assigned when an environment is added via the UI; assigning any other value would make the role unmanageable through the UI.
+    // @ts-expect-error 'access' is a valid value when an Env is assigned via UI
     actions: ['access'],
   };
 }
