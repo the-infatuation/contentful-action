@@ -22,6 +22,7 @@ export const {
   INPUT_DEFAULT_BRANCH_NAME,
   INPUT_ACTIONS,
   INPUT_SOURCE_ENVIRONMENT_ID,
+  INPUT_UPDATE_ENVIRONMENT_ACCESS_ROLE_ID,
 } = process.env;
 
 const booleanOr = (string_: string | undefined, fallback: boolean): boolean => {
@@ -82,3 +83,8 @@ const input_actions_array = INPUT_ACTIONS?.trim()?.split(/,\s*/);
 export const ACTIONS = input_actions_array?.length ? input_actions_array : DEFAULT_ACTIONS; // null or 0 are falsy, any positve is truthy
 
 export const SOURCE_ENVIRONMENT_ID = INPUT_SOURCE_ENVIRONMENT_ID || DEFAULT_SOURCE_ENVIRONMENT_ID;
+
+// Make sure that we have a value for INPUT_UPDATE_ENVIRONMENT_ACCESS_ROLE_ID when updateRoleEnvironmentAccess is part of the actions
+if (ACTIONS.includes('updateRoleEnvironmentAccess') && !INPUT_UPDATE_ENVIRONMENT_ACCESS_ROLE_ID) {
+  throw new Error('MUST specify INPUT_UPDATE_ENVIRONMENT_ACCESS_ROLE_ID in process env');
+}

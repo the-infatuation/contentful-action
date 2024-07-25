@@ -7,7 +7,6 @@ our [tutorial on Scripting Migrations](https://www.contentful.com/developers/doc
 You can read our [conceptual guide](https://www.contentful.com/developers/docs/concepts/deployment-pipeline/) on how to
 utilize Contentful Environments inside your continuous delivery pipeline.
 
-
 * [Usage](#usage)
 * [Environment names](#environment-names)
     + [Examples](#examples)
@@ -17,15 +16,15 @@ utilize Contentful Environments inside your continuous delivery pipeline.
 * [Arguments](#arguments)
 * [Workflow](#workflow)
 
-
 ## Usage
 
 This action runs migrations on your contentful space. Please add your migration scripts to a directory called
-`migrations` *(configurable)* and name them `[version].js` where `[version]` is the current version of your content-model.
+`migrations` *(configurable)* and name them `[version].js` where `[version]` is the current version of your
+content-model.
 Versions can be integers or [Semantic versions (semver)](https://semver.org/)  
-Example: `1.js`, `2.js`,`2.0.1-alpha.js`,`2.0.1-rc.js`,`2.0.1-rc.1.js`,`2.0.1-rc.2.js`, `2.0.1.js` ...  
+Example: `1.js`, `2.js`,`2.0.1-alpha.js`,`2.0.1-rc.js`,`2.0.1-rc.1.js`,`2.0.1-rc.2.js`, `2.0.1.js` ...
 
-We recommend to not mix integers with semver but as long as they are unique it will work. `2` is the same version as 
+We recommend to not mix integers with semver but as long as they are unique it will work. `2` is the same version as
 `2.0`and `2.0.0`, therefore it can cause errors if you have several versions that are considered the same.
 
 ![Screenshot of Contentful Version Tracking Entry](images/version-tracking.png)
@@ -34,7 +33,8 @@ You can choose the initial version. For simplicity, we recommend to start with `
 migrations folder and include the following code:
 
 ```js
-module.exports = function () {};
+module.exports = function() {
+};
 ```
 
 For every new version we can now increase the version (`2.js`, `3.js`, ...). Per default, this action looks for a
@@ -78,13 +78,13 @@ These helpers are available:
 the sandbox environment.
 
 `set_alias`: Will set the alias to the new master environment once the feature has been merged. You might want to
-manually set the alias from the GUI. 
+manually set the alias from the GUI.
 
 `contentful_alias`: Will use as the alias to update. Defaults to master
 
 ## Versioning
 
-Please read the usage info above. The content-type and the field-id are configurable. 
+Please read the usage info above. The content-type and the field-id are configurable.
 
 ## LOG_LEVEL
 
@@ -92,25 +92,25 @@ If you want to see more logs you can set your `LOG_LEVEL` to `verbose`. (See exa
 
 ## Arguments
 
-Name | Type | Required | Default  | Description
---- | --- | --- | --- | ---
-**space_id**             | `string`  | Yes | `undefined` | The id of the contentful space
-**management_api_key**   | `string`  | Yes | `undefined` | The management-api key for contentful
-actions                  | `string[]`| No  | `createEnvironment, createCDAToken, applyMigrations, updateAlias, cleanUpEnvironments` | The actions to run on this workflow. Comma separated string. One of `createEnvironment, backupEnvironment, createCDAToken, applyMigrations, updateAlias, cleanUpEnvironments`
-delete_feature           | `boolean` | No  | `false` | Deletes sandbox environment if the head branch is merged
-set_alias                | `boolean` | No  | `false` | Aliases master the new master environment
-contentful_alias         | `string`  | No  | `master` | Alias to update
-master_pattern           | `string`  | No  | `master-[YYYY]-[MM]-[DD]-[hh][mm]` | The pattern that should be used for the new master environment on contentful
-feature_pattern          | `string`  | No  | `GH-[branch]` | The pattern that should be used for the new feature environments on contentful
-version_content_type     | `string`  | No  | `versionTracking` | The content-type that tracks the version
-version_field            | `string`  | No  | `version` | The field-id that carries the version number
-migrations_dir           | `string`  | No  | `migrations` | The directory to look for migrations
-delay                    | `number`  | No  | `3000` | The default delay between attempts for repeatable actions
-max_number_of_tries      | `number`  | No  | `10` | The number of times action will retry a repeatable action
-create_cda_token         | `boolean` | No  | `true` | Create CDA token for current ephemeral environment
-default_branch_name      | `string`  | No  | `null` | Override the repository default branch name. Ex: `production` to track a separate release branch
-source_environment_id    | `string`  | No  | `master` | Override the environment that we are cloning from
-
+ Name                              | Type       | Required | Default                                                                                | Description                                                                                                                                                                   
+-----------------------------------|------------|----------|----------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ **space_id**                      | `string`   | Yes      | `undefined`                                                                            | The id of the contentful space                                                                                                                                                
+ **management_api_key**            | `string`   | Yes      | `undefined`                                                                            | The management-api key for contentful                                                                                                                                         
+ actions                           | `string[]` | No       | `createEnvironment, createCDAToken, applyMigrations, updateAlias, cleanUpEnvironments` | The actions to run on this workflow. Comma separated string. One of `createEnvironment, backupEnvironment, createCDAToken, applyMigrations, updateAlias, cleanUpEnvironments` 
+ delete_feature                    | `boolean`  | No       | `false`                                                                                | Deletes sandbox environment if the head branch is merged                                                                                                                      
+ set_alias                         | `boolean`  | No       | `false`                                                                                | Aliases master the new master environment                                                                                                                                     
+ contentful_alias                  | `string`   | No       | `master`                                                                               | Alias to update                                                                                                                                                               
+ master_pattern                    | `string`   | No       | `master-[YYYY]-[MM]-[DD]-[hh][mm]`                                                     | The pattern that should be used for the new master environment on contentful                                                                                                  
+ feature_pattern                   | `string`   | No       | `GH-[branch]`                                                                          | The pattern that should be used for the new feature environments on contentful                                                                                                
+ version_content_type              | `string`   | No       | `versionTracking`                                                                      | The content-type that tracks the version                                                                                                                                      
+ version_field                     | `string`   | No       | `version`                                                                              | The field-id that carries the version number                                                                                                                                  
+ migrations_dir                    | `string`   | No       | `migrations`                                                                           | The directory to look for migrations                                                                                                                                          
+ delay                             | `number`   | No       | `3000`                                                                                 | The default delay between attempts for repeatable actions                                                                                                                     
+ max_number_of_tries               | `number`   | No       | `10`                                                                                   | The number of times action will retry a repeatable action                                                                                                                     
+ create_cda_token                  | `boolean`  | No       | `true`                                                                                 | Create CDA token for current ephemeral environment                                                                                                                            
+ default_branch_name               | `string`   | No       | `null`                                                                                 | Override the repository default branch name. Ex: `production` to track a separate release branch                                                                              
+ source_environment_id             | `string`   | No       | `master`                                                                               | Override the environment that we are cloning from                                                                                                                             
+ update_environment_access_role_id | `string`   | No       | `undefined`                                                                            | The id of the Role that needs to gain access to the ephemeral environment.                                                                                                    
 
 ## Workflow
 
@@ -121,7 +121,7 @@ Please look at the [demo file](.github/workflows/main.yml).
   id: migrate
   uses: contentful-userland/contentful-migration-automation@v1
   with:
-    # actions: `createEnvironment, applyMigration, updateAlias, cleanUpEnvironments`
+    # actions: `createEnvironment, updateRoleEnvironmentAccess, applyMigration, updateAlias, cleanUpEnvironments`
     # contentful_alias: "staging"
     # master_pattern: "main-[YY]-[MM]-[DD]-[hh]-[mm]"
     # feature_pattern: "sandbox-[branch]"
@@ -130,20 +130,24 @@ Please look at the [demo file](.github/workflows/main.yml).
     # migrations_dir: contentful/migrations
     space_id: ${{ secrets.SPACE_ID }}
     management_api_key: ${{ secrets.MANAGEMENT_API_KEY }}
-  # env:
+    update_environment_access_role_id: ${{ secrets.ROLE_ID }}
+    # env:
     # LOG_LEVEL: verbose
 ```
 
 ### Some actions examples:
 
-All action options in order of execution: `createEnvironment, backupEnvironment, createCDAToken, applyMigration, updateAlias, cleanUpEnvironments`
+All action options in order of
+execution: `createEnvironment, backupEnvironment, createCDAToken, updateRoleEnvironmentAccess, applyMigration, updateAlias, cleanUpEnvironments`
 
-ephemeral - `createEnvironment, createCDAToken, applyMigration, updateAlias, cleanUpEnvironments`
+ephemeral - `createEnvironment, createCDAToken, updateRoleEnvironmentAccess, applyMigration, updateAlias, cleanUpEnvironments`
 
 production (migrate in place) = `backupEnvironment, createCDAToken, applyMigrations, cleanUpEnvironments`
 
-## Contributors 
-Thanks to our community members who have contributed code to this action. A full list of community contributors to the action are listed below, in alphabetical order:
+## Contributors
+
+Thanks to our community members who have contributed code to this action. A full list of community contributors to the
+action are listed below, in alphabetical order:
 
 - [TillaTheHun0](https://github.com/tillaTheHun0)
 - [pixelass](https://github.com/pixelass)
