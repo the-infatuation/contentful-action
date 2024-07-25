@@ -46,6 +46,8 @@ export function createAllowPolicyForEnvironment(environmentId: string): {
     constraint: {
       and: [{ equals: [{ doc: 'sys.type' }, 'Environment'] }, { equals: [{ doc: 'sys.id' }, environmentId] }],
     },
-    actions: 'all',
+    // 'access' is valid, and it's the value that is assigned when an Env is added via UI.
+    // @ts-expect-error
+    actions: ['access'],
   };
 }
