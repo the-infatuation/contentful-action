@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import type { Environment, Space } from 'contentful-management';
-import { CONTENTFUL_ALIAS, ACTIONS } from './constants';
+import { ACTIONS, CONTENTFUL_ALIAS } from './constants';
 import { getBranchNames, Logger } from './utils';
 import setLocale from './action/setLocale';
 import updateAPIKeys from './action/updateAPIKeys';
@@ -9,6 +9,7 @@ import createEnvironment from './action/createEnvironment';
 import applyMigrations from './action/applyMigrations';
 import updateAlias from './action/updateAlias';
 import cleanUpEnvironments from './action/cleanUpEnvironments';
+import updateRoleEnvironmentAccess from './action/updateRoleEnvironmentAccess';
 
 /**
  * This is a synchronous implementation of runAction - events happen in order, always.
@@ -50,6 +51,10 @@ export const runAction = async (space: Space): Promise<void> => {
     if (backupEnvironment) {
       await updateAPIKeys({ space, tokenKeyName, environment: backupEnvironment });
     }
+  }
+
+  if (ACTIONS.includes('updateRoleEnvironmentAccess') && ACTIONS.includes('createEnvironment')) {
+    await updateRoleEnvironmentAccess({ space, environment: targetEnvironment });
   }
 
   const defaultLocale = await setLocale({ environment: targetEnvironment });

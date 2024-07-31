@@ -37,6 +37,9 @@ inputs:
     description: "Override the source environment that we are cloning from."
     default: "master"
     required: false
+  update_environment_access_role_id:
+    description: "The id of the Role that needs to gain access to the ephemeral environment."
+    required: false
 
 outputs:
   environment_url:

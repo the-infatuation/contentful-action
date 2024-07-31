@@ -1,8 +1,9 @@
 import * as github from '@actions/github';
 import type { Space } from 'contentful-management';
-import { CREATE_CDA_TOKEN, FEATURE_PATTERN } from '../constants';
-import { Logger, getNameFromPattern } from '../utils';
+import { ACTIONS, CREATE_CDA_TOKEN, FEATURE_PATTERN, INPUT_UPDATE_ENVIRONMENT_ACCESS_ROLE_ID } from '../constants';
+import { getNameFromPattern, Logger } from '../utils';
 import type { BranchNames } from '../types';
+import { removePolicyByEnvironmentId } from '../role';
 
 export default async function ({
   space,
@@ -34,6 +35,23 @@ export default async function ({
         Logger.error('Unable to delete ephemeral token');
         Logger.verbose(error);
       }
+    }
+  }
+
+  // When the sandbox environment should be deleted, remove its access from the Role
+  if (ACTIONS.includes('updateRoleEnvironmentAccess') && githubAction === 'closed') {
+    const environmentId = getNameFromPattern(FEATURE_PATTERN, {
+      branchName: branchNames.headRef,
+    });
+    const roleId: string = INPUT_UPDATE_ENVIRONMENT_ACCESS_ROLE_ID!;
+    try {
+      Logger.log(`Deleting the Environment ${environmentId} access from Role ${roleId}`);
+      const role = await space.getRole(roleId);
+      role.policies = removePolicyByEnvironmentId(role, environmentId);
+      await role.update();
+      Logger.success(`Successfully deleted the Environment ${environmentId} access from Role ${roleId}`);
+    } catch {
+      Logger.error(`Failed to delete Environment ${environmentId} access from Role ${roleId}`);
     }
   }
 
