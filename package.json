@@ -32,7 +32,7 @@
     "@actions/core": "^1.1.1",
     "@actions/github": "^6.0.0",
     "chalk": "^4.1.0",
-    "contentful-management": "^10.6.2",
+    "contentful-management": "^11.30.2",
     "contentful-migration": "^4.9.1",
     "to-semver": "^3.0.0"
   },
