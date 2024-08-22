@@ -23,16 +23,32 @@ const sanitizeMsg = (message: string): string => message.replace(/\n|\r/g, '');
 /* eslint-disable no-console */
 export const Logger = {
   log(message) {
-    console.log(sanitizeMsg(message));
+    if (typeof message === 'string') {
+      console.log(sanitizeMsg(message));
+    } else {
+      console.log(message);
+    }
   },
   info(message) {
-    console.info(sanitizeMsg(message));
+    if (typeof message === 'string') {
+      console.info(sanitizeMsg(message));
+    } else {
+      console.info(message);
+    }
   },
   success(message) {
-    console.info(sanitizeMsg(message));
+    if (typeof message === 'string') {
+      console.info(sanitizeMsg(message));
+    } else {
+      console.info(message);
+    }
   },
   warn(message) {
-    console.warn(sanitizeMsg(message));
+    if (typeof message === 'string') {
+      console.warn(sanitizeMsg(message));
+    } else {
+      console.warn(message);
+    }
   },
   error(message) {
     if (typeof message === 'string') {
