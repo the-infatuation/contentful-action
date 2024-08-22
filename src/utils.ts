@@ -39,7 +39,7 @@ export const Logger = {
   },
   verbose(message) {
     if (LOG_LEVEL === 'verbose') {
-      console.debug(sanitizeMsg(message));
+      typeof message === 'string' ? console.debug(sanitizeMsg(message)) : console.debug(message);
     }
   },
 };
