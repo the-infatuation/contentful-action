@@ -35,11 +35,19 @@ export const Logger = {
     console.warn(sanitizeMsg(message));
   },
   error(message) {
-    typeof message === 'string' ? console.error(sanitizeMsg(message)) : console.error(message);
+    if (typeof typeof message === 'string') {
+      console.error(sanitizeMsg(message));
+    } else {
+      console.error(message);
+    }
   },
   verbose(message) {
     if (LOG_LEVEL === 'verbose') {
-      typeof message === 'string' ? console.debug(sanitizeMsg(message)) : console.debug(message);
+      if (typeof typeof message === 'string') {
+        console.debug(sanitizeMsg(message));
+      } else {
+        console.debug(message);
+      }
     }
   },
 };
