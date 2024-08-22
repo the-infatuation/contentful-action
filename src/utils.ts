@@ -35,7 +35,7 @@ export const Logger = {
     console.warn(sanitizeMsg(message));
   },
   error(message) {
-    console.error(sanitizeMsg(message));
+    typeof message === 'string' ? console.error(sanitizeMsg(message)) : console.error(message);
   },
   verbose(message) {
     if (LOG_LEVEL === 'verbose') {
