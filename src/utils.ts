@@ -18,7 +18,7 @@ chalk.level = 3;
 
 const stringifyObject = (object) => JSON.stringify(object, null, 2);
 
-const sanitizeMsg = (message: string): string => message.replace(/\n|\r/g, '');
+const sanitizeMsg = (message): string => String(message).replace(/\n|\r/g, '');
 
 /* eslint-disable no-console */
 export const Logger = {
