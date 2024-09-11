@@ -8,7 +8,15 @@ export default async function ({ space, environment }: { space: Space; environme
   try {
     Logger.log(`Updating the Role ${roleId} to have access on Environment: ${environment.sys.id}.`);
     const role = await space.getRole(roleId);
-    role.policies.push(createAllowPolicyForEnvironment(environment.sys.id));
+
+    let isEnvironmentIdInRolePolicy = false;
+    for (const policy of role.policies) {
+      if (environment.sys.id === policy.constraint.and[1].equals[1]) {
+        isEnvironmentIdInRolePolicy = true;
+      }
+    }
+
+    if (!isEnvironmentIdInRolePolicy) role.policies.push(createAllowPolicyForEnvironment(environment.sys.id));
     await role.update();
     Logger.success(`Successfully updated the Role ${roleId} with Environment ${environment.sys.id}.`);
   } catch (error) {
