@@ -1,5 +1,5 @@
 import type { Environment, Space } from 'contentful-management';
-import { createAllowPolicyForEnvironment } from '../role';
+import { containsEnvironmentId, createAllowPolicyForEnvironment } from '../role';
 import { INPUT_UPDATE_ENVIRONMENT_ACCESS_ROLE_ID } from '../constants';
 import { Logger } from '../utils';
 
@@ -11,7 +11,7 @@ export default async function ({ space, environment }: { space: Space; environme
 
     let isEnvironmentIdInRolePolicy = false;
     for (const policy of role.policies) {
-      if (environment.sys.id === policy.constraint.and[1].equals[1]) {
+      if (policy.effect === 'allow' && containsEnvironmentId(policy.constraint, environment.sys.id)) {
         isEnvironmentIdInRolePolicy = true;
       }
     }
