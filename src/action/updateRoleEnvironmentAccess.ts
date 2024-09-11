@@ -11,7 +11,13 @@ export default async function ({ space, environment }: { space: Space; environme
 
     let isEnvironmentIdInRolePolicy = false;
     for (const policy of role.policies) {
-      if (policy.effect === 'allow' && containsEnvironmentId(policy.constraint, environment.sys.id)) {
+      if (
+        policy.effect === 'allow' &&
+        Array.isArray(policy.actions) &&
+        // @ts-expect-error 'access' is a valid value when an Env is assigned via UI
+        policy.actions.includes('access') &&
+        containsEnvironmentId(policy.constraint, environment.sys.id)
+      ) {
         isEnvironmentIdInRolePolicy = true;
       }
     }
