@@ -13,7 +13,8 @@ export default async function ({ space, environment }: { space: Space; environme
     );
     if (isEnvironmentIdInRolePolicy) {
       Logger.log(`The Role ${roleId} has already been given access to Environment ${environment.sys.id}.`);
-      return; // eslint-disable-line padding-line-between-statements
+
+      return;
     }
     role.policies.push(createAllowPolicyForEnvironment(environment.sys.id));
     await role.update();
