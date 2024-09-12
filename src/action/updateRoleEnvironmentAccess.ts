@@ -8,26 +8,15 @@ export default async function ({ space, environment }: { space: Space; environme
   try {
     Logger.log(`Updating the Role ${roleId} to have access on Environment: ${environment.sys.id}.`);
     const role = await space.getRole(roleId);
-
-    let isEnvironmentIdInRolePolicy = false;
-    for (const policy of role.policies) {
-      if (
-        policy.effect === 'allow' &&
-        Array.isArray(policy.actions) &&
-        // @ts-expect-error 'access' is a valid value when an Env is assigned via UI
-        policy.actions.includes('access') &&
-        containsEnvironmentId(policy.constraint, environment.sys.id)
-      ) {
-        isEnvironmentIdInRolePolicy = true;
-      }
-    }
-
-    if (!isEnvironmentIdInRolePolicy) {
+    const isEnvironmentIdInRolePolicy = role.policies.some((policy) =>
+      containsEnvironmentId(policy.constraint, environment.sys.id),
+    );
+    if (isEnvironmentIdInRolePolicy) {
+      Logger.log(`The Role ${roleId} has already been given access to Environment ${environment.sys.id}.`);
+    } else {
       role.policies.push(createAllowPolicyForEnvironment(environment.sys.id));
       await role.update();
       Logger.success(`Successfully updated the Role ${roleId} with Environment ${environment.sys.id}.`);
-    } else {
-      Logger.log(`The Role ${roleId} has already been given access to Environment ${environment.sys.id}.`);
     }
   } catch (error) {
     Logger.error(`Failed to update the Role ${roleId} with Environment ${environment.sys.id}.`);
