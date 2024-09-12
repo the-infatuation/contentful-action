@@ -13,11 +13,11 @@ export default async function ({ space, environment }: { space: Space; environme
     );
     if (isEnvironmentIdInRolePolicy) {
       Logger.log(`The Role ${roleId} has already been given access to Environment ${environment.sys.id}.`);
-    } else {
-      role.policies.push(createAllowPolicyForEnvironment(environment.sys.id));
-      await role.update();
-      Logger.success(`Successfully updated the Role ${roleId} with Environment ${environment.sys.id}.`);
+      return; // eslint-disable-line padding-line-between-statements
     }
+    role.policies.push(createAllowPolicyForEnvironment(environment.sys.id));
+    await role.update();
+    Logger.success(`Successfully updated the Role ${roleId} with Environment ${environment.sys.id}.`);
   } catch (error) {
     Logger.error(`Failed to update the Role ${roleId} with Environment ${environment.sys.id}.`);
     Logger.verbose(error);
