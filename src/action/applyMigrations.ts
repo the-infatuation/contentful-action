@@ -58,29 +58,41 @@ export default async function ({ environment, defaultLocale }: { environment: En
   };
 
   Logger.verbose('Run migrations and update version entry');
-  // Allow mutations
-  let migrationToRun;
-  let lastMigration;
+
+  let lastMigration: string | undefined;
 
   /* eslint-disable no-await-in-loop */
-  while ((migrationToRun = migrationsToRun.shift())) {
-    const filePath = path.join(MIGRATIONS_DIR, versionToFilename(migrationToRun));
-    Logger.verbose(`Running ${filePath}`);
-    await runMigration(
-      Object.assign(migrationOptions, {
+  try {
+    for (const migrationToRun of migrationsToRun) {
+      const filePath = path.join(MIGRATIONS_DIR, versionToFilename(migrationToRun));
+      Logger.verbose(`Running ${filePath}`);
+
+      await runMigration({
+        ...migrationOptions,
         filePath,
-      }),
+      });
+
+      lastMigration = migrationToRun;
+      Logger.success(`Migration script ${migrationToRun}.js succeeded`);
+    }
+  } catch (error) {
+    const brokenMigrationIdx = Math.max(migrationsToRun.indexOf(lastMigration ?? '') - 1, 0);
+    Logger.error(
+      `Migration script ${migrationsToRun[brokenMigrationIdx]}.js failed with error: ${(error as Error).message}`,
     );
-    lastMigration = migrationToRun;
-    Logger.success(`Migration script ${migrationToRun}.js succeeded`);
+    Logger.info(
+      lastMigration
+        ? `Last successful migration was ${lastMigration}.js`
+        : 'No migrations were successfully run before the failure.',
+    );
   }
 
   if (lastMigration) {
     storedVersionEntry.fields.version[defaultLocale] = lastMigration;
     const updatedVersionEntry = await storedVersionEntry.update();
     await updatedVersionEntry.publish();
+    Logger.success(`Updated field ${VERSION_FIELD} in ${VERSION_CONTENT_TYPE} entry to ${lastMigration}`);
   }
 
-  Logger.success(`Updated field ${VERSION_FIELD} in ${VERSION_CONTENT_TYPE} entry to ${migrationToRun}`);
   /* eslint-enable no-await-in-loop */
 }
