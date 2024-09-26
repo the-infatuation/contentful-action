@@ -76,7 +76,7 @@ export default async function ({ environment, defaultLocale }: { environment: En
       Logger.success(`Migration script ${migrationToRun}.js succeeded`);
     }
   } catch (error) {
-    const brokenMigrationIdx = Math.max(migrationsToRun.indexOf(lastMigration ?? '') - 1, 0);
+    const brokenMigrationIdx = migrationsToRun.indexOf(lastMigration ?? '') + 1;
     Logger.error(
       `Migration script ${migrationsToRun[brokenMigrationIdx]}.js failed with error: ${(error as Error).message}`,
     );
