@@ -35,7 +35,7 @@
     "contentful-management": "^11.35.0",
     "contentful-migration": "^4.23.2",
     "json-patch": "^0.7.0",
-    "to-semver": "^3.0.0",
+    "to-semver": "^4.0.0",
     "type-fest": "^4.26.1"
   },
   "devDependencies": {
